@@ -1,0 +1,11 @@
+payer_key,payer_name,payer_category
+1,Blue Cross/Blue Shield,Commercial
+2,Department of Corrections,Government
+3,Federal/State/Local/VA,Government
+4,"Managed Care, Unspecified",Commercial
+5,Medicaid,Government
+6,Medicare,Government
+7,Miscellaneous/Other,Other
+8,Private Health Insurance,Commercial
+9,Self-Pay,Self-Pay
+10,Unknown,Other

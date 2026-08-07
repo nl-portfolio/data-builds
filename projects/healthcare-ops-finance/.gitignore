@@ -1,0 +1,23 @@
+# Raw and interim data are regenerable from the seeded generator, so they are
+# not committed. The processed marts ARE committed so the dashboard and results
+# are visible without running the pipeline. (See decisions.md.)
+data/raw/
+data/interim/
+*.duckdb
+*.duckdb.wal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Power BI temp / cache
+*.tmp
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Working brief that fed the case study; not meant to be read standalone
+docs/case_study_brief.md

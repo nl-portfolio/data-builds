@@ -1,0 +1,25 @@
+facility_key,facility_name,hospital_county,sub_region,facility_role,source_facility_ids,source_operating_certificates
+1,A.O. FOX MEMORIAL HOSPITAL,Otsego,Central NY / Catskill Foothills,Sole Community Hospital,000739,3801000
+2,ADIRONDACK MEDICAL CENTER-SARANAC LAKE SITE,Franklin,North Country / Adirondack,Sole Community Hospital,000324,1623001
+3,ALBANY MEDICAL CENTER HOSPITAL,Albany,Capital District,Academic Medical Center,000001,0101000
+4,COBLESKILL REGIONAL HOSPITAL,Schoharie,Central NY / Catskill Foothills,Critical Access Hospital,010216,4720700
+5,COLUMBIA MEMORIAL HOSPITAL,Columbia,Central NY / Catskill Foothills,Community Acute (PPS),000146,1001000
+6,DELAWARE VALLEY HOSPITAL INC,Delaware,Central NY / Catskill Foothills,Critical Access Hospital,000174,1229700
+7,ELLIS HOSPITAL,Schenectady,Capital District,Community Acute (PPS),000829,4601001
+8,ELLIS HOSPITAL - BELLEVUE WOMAN'S CARE CENTER DIVISION,Schenectady,Capital District,Specialty / Satellite,000848,4601001
+9,GLENS FALLS HOSPITAL,Warren,North Country / Adirondack,Community Acute (PPS),001005,5601000
+10,MARGARETVILLE HOSPITAL,Delaware,Central NY / Catskill Foothills,Critical Access Hospital,000170,1226701
+11,MARY IMOGENE BASSETT HOSPITAL,Otsego,Central NY / Catskill Foothills,Sole Community Hospital,000746,3824000
+12,NATHAN LITTAUER HOSPITAL,Fulton,Mohawk Valley,Community Acute (PPS),000330,1701000
+13,O'CONNOR HOSPITAL,Delaware,Central NY / Catskill Foothills,Critical Access Hospital,000165,1254700
+14,SAMARITAN HOSPITAL,Rensselaer,Capital District,Community Acute (PPS),000756,4102002
+15,SARATOGA HOSPITAL,Saratoga,Capital District,Community Acute (PPS),000818,4501000
+16,ST. MARY'S HEALTHCARE,Montgomery,Mohawk Valley,Community Acute (PPS),000484,2801001
+17,ST. MARY'S HEALTHCARE - AMSTERDAM MEMORIAL CAMPUS,Montgomery,Mohawk Valley,Specialty / Satellite,000482,2801001
+18,ST. PETER'S ADDICTION RECOVERY CENTER,Albany,Capital District,Specialty / Satellite,009431,0101004
+19,ST. PETER'S HOSPITAL,Albany,Capital District,Community Acute (PPS),000005,0101004
+20,ST. PETER'S HOSPITAL - SPARC,Rensselaer,Capital District,Specialty / Satellite,015417,0101004
+21,SUNNYVIEW HOSPITAL AND REHABILITATION CENTER,Schenectady,Capital District,Specialty / Satellite,000831,4601004
+22,THE UNIVERSITY OF VERMONT HEALTH NETWORK - ALICE HYDE MEDICAL CENTER,Franklin,North Country / Adirondack,Critical Access Hospital,"000325, 015485","1624000, 1624700"
+23,THE UNIVERSITY OF VERMONT HEALTH NETWORK - CHAMPLAIN VALLEY PHYSICIANS HOSPITAL,Clinton,North Country / Adirondack,Sole Community Hospital,000135,0901001
+24,THE UNIVERSITY OF VERMONT HEALTH NETWORK - ELIZABETHTOWN COMMUNITY HOSPITAL,Essex,North Country / Adirondack,Critical Access Hospital,000303,1552701

@@ -1,0 +1,5 @@
+sub_region,discharge_count,pct_of_total_volume,ed_utilization_pct,high_severity_pct,avg_length_of_stay_days,total_costs,avg_cost_per_discharge
+Capital District,97911,68.2,59.4,38.5,5.56,1511164022.05,15434.06
+North Country / Adirondack,24080,16.8,69.2,33.2,5.26,367969032.69,15281.11
+Central NY / Catskill Foothills,15275,10.6,61.9,37.5,5.28,314923668.66,20616.93
+Mohawk Valley,6347,4.4,71.5,32.9,4.9,71767641.87,11307.33

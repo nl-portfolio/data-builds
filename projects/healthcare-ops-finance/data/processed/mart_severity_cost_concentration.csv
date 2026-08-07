@@ -1,0 +1,6 @@
+apr_severity_of_illness,discharge_count,total_charges,total_costs,cost_rank,pct_of_total_cost,cumulative_pct_of_total_cost
+Major,39494,2158658806.58,721948240.88,1,31.9,31.9
+Moderate,51645,1871681710.77,642240392.59,2,28.3,60.2
+Extreme,13958,1711511794.40,559246582.62,3,24.7,84.9
+Minor,38492,952118367.87,342273826.55,4,15.1,100.0
+Undetermined,24,273743.92,115322.63,5,0.0,100.0

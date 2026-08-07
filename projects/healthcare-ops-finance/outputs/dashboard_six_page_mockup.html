@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Healthcare Ops &amp; Finance — Six-page dashboard mockup</title>
+<style>
+  :root{
+    --surface-0:#F5F8F9;
+    --surface-1:#FFFFFF;
+    --surface-2:#EEF2F3;
+    --text-primary:#16232E;
+    --text-secondary:#526271;
+    --text-muted:#647280;
+    --border:#E2E8EC;
+    --border-strong:#C9D2D8;
+    --border-stronger:#C9D2D8;
+    --radius:8px;
+    --bg-accent:#146C6C;
+    --bg-accent-hover:#0F5450;
+    --text-accent:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:24px;
+    background:var(--surface-0);
+    font-family:'Calibri','Carlito','Segoe UI',Arial,sans-serif;
+    color:var(--text-primary);
+    font-variant-numeric:tabular-nums;
+  }
+  .wrap{max-width:1280px;margin:0 auto;}
+  h1{font-size:26px;font-weight:700;margin:0 0 4px;}
+  .subtitle{font-size:13px;color:var(--text-secondary);margin:0 0 18px;}
+  h3{font-size:19px;font-weight:600;color:var(--text-primary);}
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    background:var(--surface-2);
+    color:var(--text-secondary);
+    border:0.5px solid var(--border);
+    border-radius:var(--radius);
+  }
+  button:hover{filter:brightness(0.97);}
+  table{font-family:inherit;}
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+  .footer-note{margin-top:28px;font-size:11px;color:var(--text-muted);border-top:0.5px solid var(--border);padding-top:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Healthcare Ops &amp; Finance — SPARCS Inpatient Discharges 2024</h1>
+  <p class="subtitle">Dashboard mockup: six-page reference layout with slicers, KPI cards, and visualizations. Reflects the five senior-review fixes; values re-verified against the processed star schema, 2026-07-16.</p>
+
+  <h2 class="sr-only">Six-page Power BI dashboard mockup for the healthcare operations and finance project: Executive Summary, Cost concentration, Charge-to-cost ratio, Payer mix, Length of stay, and Urban vs rural utilization, each with slicers, KPI cards, and visualizations showing validated values.</h2>
+  <div id="tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;"></div>
+  <div id="pages"></div>
+
+  <div class="footer-note">
+    Mockup only, not a live export of the .pbix. Reflects the post-review state (2026-07-16): Page 1 risk score rescoped to 19 general-acute facilities (Fix 3), Page 3 reframed to a derived-cost basis with CCR caveat (Fix 2), Page 4 Medicaid sensitivity band added (Fix 1), Page 6 per-capita callout softened to a hypothesis with a numerator/denominator footnote (Fix 4). Bubble-chart point sizes for facilities outside the top-validated subset (Page 3/4 scatter charts) are approximate; ranked bars and headline KPI values are exact.
+    Page 5's facility-by-severity table shows four illustrative rows rather than the full ~120-row matrix. Generated as a reference companion to the live dashboard.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// Healthcare Ops & Finance, Clinical palette (color_palette_healthcare.md)
+const PALETTE = {
+  navy:'#2C5F8A', sky:'#3B82C4', green:'#2E9E4E', gold:'#AD8A1C',
+  vermillion:'#C1391F', rose:'#C15E86', violet:'#8B7EC8', taupe:'#8A6B4F',
+  accent:'#146C6C', accentHover:'#0F5450',
+  good:'#2C8655', warn:'#9A6F18', risk:'#CC4A30',
+  neutral:'#9AA5AF',
+};
+const SEVERITY_RAMP = {Minor:'#C9E0DE', Moderate:'#7FB8B4', Major:'#3E8F8A', Extreme:'#146C6C', Undetermined:'#9AA5AF'};
+const MORTALITY_RAMP = {Minor:'#F3D9CE', Moderate:'#E3A489', Major:'#D06B44', Extreme:'#CC4A30', Undetermined:'#9AA5AF'};
+if (window.Chart) { Chart.defaults.font.family = "'Calibri','Carlito','Segoe UI',Arial,sans-serif"; Chart.defaults.color = '#526271'; }
+
+const SUBREGIONS = ['Capital District','Central NY / Catskill Foothills','Mohawk Valley','North Country / Adirondack'];
+const REGION_COLOR = {
+  'Capital District': PALETTE.navy,
+  'North Country / Adirondack': PALETTE.sky,
+  'Central NY / Catskill Foothills': PALETTE.green,
+  'Mohawk Valley': PALETTE.gold,
+};
+const subColor = sr => REGION_COLOR[sr];
+
+function card(v){ return `<div style="background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;min-width:120px;flex:1;"><div style="font-size:28px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;">${v.value}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">${v.label}</div></div>`; }
+function kpiRow(cards){ return `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">${cards.map(card).join('')}</div>`; }
+function panelTitle(t){ return `<div style="font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">${t}</div>`; }
+function panel(inner, w){ return `<div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:14px;flex:${w||1};min-width:260px;">${inner}</div>`; }
+function slicerChip(label, val){ return `<div style="background:var(--surface-1);border:0.5px solid var(--border);border-radius:var(--radius);padding:6px 10px;font-size:12px;"><span style="color:var(--text-muted);">${label}:</span> <span style="color:var(--text-primary);font-weight:600;">${val}</span></div>`; }
+function slicerBar(extra){
+  let chips = [slicerChip('Facility name','All'), slicerChip('Sub region','All'), slicerChip('Severity','All')];
+  if(extra) extra.forEach(e=>chips.push(slicerChip(e[0], e[1])));
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">${chips.join('')}</div>`;
+}
+function hbar(pct, color){ return `<div style="background:var(--surface-0);border-radius:3px;height:8px;width:100%;overflow:hidden;"><div style="background:${color||PALETTE.accent};height:100%;width:${pct}%;"></div></div>`; }
+
+function dataTable(headers, rows, totalRow){
+  let h = headers.map(x=>`<th style="text-align:${x.num?'right':'left'};font-size:11px;color:var(--text-secondary);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border-strong);white-space:nowrap;">${x.label}</th>`).join('');
+  let b = rows.map(r=>`<tr>${r.map((c,i)=>`<td style="padding:6px 8px;font-size:12px;text-align:${headers[i].num?'right':'left'};color:var(--text-primary);border-bottom:0.5px solid var(--border);white-space:nowrap;${headers[i].num?'font-variant-numeric:tabular-nums;':''}">${c}</td>`).join('')}</tr>`).join('');
+  let t = totalRow ? `<tr>${totalRow.map((c,i)=>`<td style="padding:6px 8px;font-size:12px;font-weight:600;text-align:${headers[i].num?'right':'left'};color:var(--text-primary);border-top:1px solid var(--border-stronger);${headers[i].num?'font-variant-numeric:tabular-nums;':''}">${c}</td>`).join('')}</tr>` : '';
+  return `<div style="overflow-x:auto;"><table style="border-collapse:collapse;width:100%;">
+  <thead><tr>${h}</tr></thead><tbody>${b}${t}</tbody></table></div>`;
+}
+
+function matrixCell(val, display, max, color){
+  const pct = Math.max(4, val/max*100);
+  return `<td style="padding:6px 8px;font-size:12px;color:var(--text-primary);border-bottom:0.5px solid var(--border);position:relative;min-width:88px;font-variant-numeric:tabular-nums;">
+    <div style="position:absolute;left:2px;right:2px;top:3px;bottom:3px;background:${color};opacity:0.18;width:${pct}%;border-radius:2px;"></div>
+    <span style="position:relative;">${display}</span></td>`;
+}
+
+const PAGES = {};
+
+// ---------------- PAGE 1: Executive Summary ----------------
+PAGES.p1 = () => {
+  const kpis = [
+    {value:'144K',label:'Total discharges'},
+    {value:'24',label:'Facility count'},
+    {value:'14',label:'County count'},
+    {value:'2.27bn',label:'Total costs'},
+    {value:'2.95',label:'Charge to cost ratio'},
+  ];
+  const rows = [
+    ['Ellis Hospital','Capital District','9,552','19.20%','33.21%','68.5',''],
+    ['Nathan Littauer Hospital','Mohawk Valley','2,282','30.15%','17.00%','68.5',''],
+    ['Samaritan Hospital','Capital District','9,912','26.99%','26.32%','66.7',''],
+    ['Univ of Vermont Health Network - Champlain Valley Physicians Hospital','North Country / Adirondack','8,072','18.64%','25.05%','61.1',''],
+    ["St. Mary's Healthcare",'Mohawk Valley','3,806','28.35%','15.34%','61.1',''],
+    ['Columbia Memorial Hospital','Central NY / Catskill Foothills','3,051','15.37%','21.87%','57.4',''],
+    ["St. Peter's Hospital",'Capital District','24,768','20.85%','26.00%','57.4',''],
+    ['Mary Imogene Bassett Hospital','Central NY / Catskill Foothills','9,910','16.17%','23.91%','53.7',''],
+  ];
+  const headers = [{label:'Facility'},{label:'Sub region'},{label:'Discharges',num:1},{label:'Medicaid share',num:1},{label:'Extreme cost %',num:1},{label:'Score',num:1},{label:'Low-volume flag'}];
+  const bars = [['Capital District',97911],['North Country / Adirondack',24080],['Central NY / Catskill Foothills',15275],['Mohawk Valley',6347]];
+  const maxb = 97911;
+  return `${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Facility risk score — top 8 of 19 (general acute)')+dataTable(headers, rows)+`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Ranked across 19 general-acute facilities only; the 5 specialty/satellite units (SPARC, Sunnyview, Bellevue Woman's, Amsterdam campus, Addiction Recovery) are held out so small campuses of solvent systems don't crowd out genuine rural risk. Score = mean of Medicaid-dependency, size-fragility, and cost-complexity percentiles (equal-weighted).</div>`, 2)}
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    ${panel(panelTitle('Recommended focus areas')+`<div style="font-size:12px;line-height:1.7;color:var(--text-primary);">
+      <p style="margin:0 0 8px;">Ellis Hospital and Nathan Littauer Hospital top the general-acute risk ranking (68.5), each combining Medicaid dependency, extreme-severity cost share, and size fragility rather than a single driver.</p>
+      <p style="margin:0 0 8px;">Nathan Littauer Hospital (2,282 discharges, Mohawk Valley) is the standout rural sole-community concern — the highest Medicaid share in the top tier at 30.2% — and the top candidate for network-adequacy monitoring.</p>
+      <p style="margin:0;">Excluding the specialty/satellite units moved genuine full-service hospitals to the top: the pre-fix ranking was dominated by sub-300-discharge campuses of solvent health systems, which is a data artifact, not a network-risk signal.</p></div>`)}
+    ${panel(panelTitle('Total discharges by sub region')+bars.map(b=>`<div style="margin-bottom:8px;"><div style="font-size:11px;color:var(--text-secondary);margin-bottom:3px;">${b[0]} · ${b[1].toLocaleString()}</div>${hbar(b[1]/maxb*100, subColor(b[0]))}</div>`).join(''))}
+  </div>`;
+};
+
+// ---------------- PAGE 2: Cost concentration ----------------
+PAGES.p2 = () => {
+  const kpis = [
+    {value:'10.88%',label:'Top 1% discharge cost share'},
+    {value:'27.53%',label:'Top 5% discharge cost share'},
+    {value:'40.03%',label:'Top 10% discharge cost share'},
+    {value:'24.68%',label:'Extreme tier cost share'},
+    {value:'2.27bn',label:'Total costs'},
+  ];
+  const drgHeaders=[{label:'DRG description'},{label:'MDC'},{label:'Discharges',num:1},{label:'Total costs',num:1},{label:'Avg cost',num:1}];
+  const drgRows=[
+    ['Septicemia and disseminated infections','Infectious/Parasitic','11,830','$220,967,976','$18,679'],
+    ['Infectious/parasitic w/ HIV + O.R. procedure','Infectious/Parasitic','1,622','$67,194,738','$41,427'],
+    ['Heart failure','Circulatory','4,566','$63,671,496','$13,945'],
+    ['Vaginal delivery','Pregnancy/Childbirth','7,240','$53,074,031','$7,331'],
+    ['Percutaneous structural cardiac procedures','Circulatory','811','$45,043,965','$55,541'],
+    ['Respiratory failure','Respiratory','2,585','$37,102,564','$14,353'],
+    ['Cesarean section w/o sterilization','Pregnancy/Childbirth','3,397','$37,079,049','$10,915'],
+  ];
+  return `${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Cost concentration by severity tier (Pareto)')+`<div style="position:relative;height:220px;"><canvas id="pareto" role="img" aria-label="Pareto chart of total cost by severity tier with cumulative percent line">Major 31.9%, Moderate 60.2% cumulative, Extreme 84.9% cumulative, Minor 100% cumulative, Undetermined 100% cumulative.</canvas></div>`)}
+    ${panel(panelTitle('Total costs by severity and risk of mortality')+`<div style="position:relative;height:220px;"><canvas id="rom" role="img" aria-label="Stacked bar chart of cost share by severity tier split by risk of mortality">Diagonal pattern: higher severity tiers concentrate in higher risk-of-mortality categories.</canvas></div>`)}
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    ${panel(panelTitle('Top 15 DRGs by total cost (top 7 shown)')+dataTable(drgHeaders, drgRows)+`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">+8 more DRGs, sorted to 15 by total cost</div>`)}
+    ${panel(panelTitle('Full DRG cumulative cost curve (324 DRGs)')+`<div style="position:relative;height:200px;"><canvas id="drgcurve" role="img" aria-label="Line chart of cumulative percent of total cost across 324 DRGs sorted by cost rank, reaching 100% by the last DRG">Cumulative cost curve rises steeply then flattens, showing cost concentration among the top DRGs.</canvas></div>`)}
+  </div>`;
+};
+
+// ---------------- PAGE 3: Hospital pricing behavior ----------------
+PAGES.p3 = () => {
+  const kpis = [
+    {value:'2.95',label:'Charge to cost ratio'},
+    {value:'4.78',label:'Highest facility ratio · Saratoga'},
+    {value:'1.03',label:"Lowest facility ratio · O'Connor"},
+    {value:'3.10',label:'National avg · CMS CCR'},
+    {value:'3.40',label:'National avg · Bai & Anderson'},
+  ];
+  const fac = [
+    ['Saratoga Hospital','Capital District',4.78],['Samaritan Hospital','Capital District',3.89],
+    ['Albany Medical Center Hospital','Capital District',3.38],['Ellis Hospital','Capital District',3.27],
+    ["St. Peter's Hospital",'Capital District',3.14],['Columbia Memorial Hospital','Central NY / Catskill Foothills',2.92],
+    ['Nathan Littauer Hospital','Mohawk Valley',2.91],['UVM Health Network - Alice Hyde Medical Center','North Country / Adirondack',2.91],
+    ['UVM Health Network - Champlain Valley Physicians Hospital','North Country / Adirondack',2.73],['Glens Falls Hospital','North Country / Adirondack',2.70],
+    ["St. Peter's Addiction Recovery Center",'Capital District',2.50],['Delaware Valley Hospital Inc','Central NY / Catskill Foothills',2.47],
+    ["St. Mary's Healthcare",'Mohawk Valley',2.41],["St. Peter's Hospital - SPARC",'Capital District',2.28],
+    ['Sunnyview Hospital and Rehabilitation Center','Capital District',2.16],["Ellis Hospital - Bellevue Woman's Care Center",'Capital District',2.07],
+    ['Adirondack Medical Center - Saranac Lake Site','North Country / Adirondack',1.99],['Margaretville Hospital','Central NY / Catskill Foothills',1.84],
+    ["St. Mary's Healthcare - Amsterdam Memorial Campus",'Mohawk Valley',1.68],['A.O. Fox Memorial Hospital','Central NY / Catskill Foothills',1.58],
+    ['Cobleskill Regional Hospital','Central NY / Catskill Foothills',1.48],['Mary Imogene Bassett Hospital','Central NY / Catskill Foothills',1.31],
+    ['UVM Health Network - Elizabethtown Community Hospital','North Country / Adirondack',1.20],["O'Connor Hospital",'Central NY / Catskill Foothills',1.03],
+  ];
+  const maxr = 4.78;
+  const bars = fac.map(f=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+    <div style="width:210px;font-size:11px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f[0]}</div>
+    <div style="flex:1;">${hbar(f[2]/maxr*100, subColor(f[1]))}</div>
+    <div style="width:34px;font-size:11px;color:var(--text-secondary);text-align:right;">${f[2].toFixed(2)}</div></div>`).join('');
+  const legend = SUBREGIONS.map((s)=>`<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:11px;color:var(--text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:${REGION_COLOR[s]};display:inline-block;"></span>${s}</span>`).join('');
+  const titleBox = `<div style="background:var(--surface-1);border:0.5px solid var(--border);border-left:3px solid var(--bg-accent);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;">
+    <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:3px;">Charge-to-Cost Ratio (SPARCS derived-cost basis)</div>
+    <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;">Ratio of billed charges to SPARCS estimated costs. SPARCS costs are derived from cost-to-charge ratios, so this reflects each facility's assigned CCR, not independently observed pricing.</div></div>`;
+  const caveatBox = `<div style="background:var(--surface-2);border:0.5px solid var(--border-strong);border-radius:var(--radius);padding:10px 12px;margin-top:12px;font-size:11.5px;color:var(--text-secondary);line-height:1.6;">
+    <strong style="color:var(--text-primary);">Read as directional.</strong> SPARCS <code>total_costs</code> is estimated by applying cost-to-charge ratios to charges, not measured from hospital accounting. Within a facility, ~92% of cost variation (median R²=0.92) is explained by charges, so this ratio largely restates each facility's assigned CCR. Compare to the national benchmark rather than treating any single facility's ratio as a pricing decision.</div>`;
+  return `${titleBox}${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Charge-to-cost ratio, discharges and low-volume flag by facility')+`<div style="position:relative;height:280px;"><canvas id="scatter3" role="img" aria-label="Bubble chart of charge to cost ratio by facility, bubble size is discharge volume, colored by sub region">24 facilities plotted by charge to cost ratio and discharge volume, colored by sub region.</canvas></div><div style="margin-top:6px;">${legend}</div>`)}
+    ${panel(panelTitle('Charge-to-cost ratio by facility, sorted descending')+bars)}
+  </div>${caveatBox}`;
+};
+
+// ---------------- PAGE 4: Payer mix ----------------
+PAGES.p4 = () => {
+  const kpis = [{value:'64.83%',label:'Government share'},{value:'16.38%',label:'Medicaid share (reported floor)'}];
+  const payerColors = {Government:PALETTE.navy,Commercial:PALETTE.sky,'Self-Pay':PALETTE.vermillion,Other:PALETTE.taupe};
+  // [name, Government%, Commercial%, Self-Pay%, Other%] — real per-facility payer_category splits,
+  // top 12 by Government share (data/processed/mart_payer_mix_by_facility.csv)
+  const facs = [
+    ["St. Peter's Hospital - SPARC",95.1,4.5,0.4,0.0],
+    ["St. Mary's Healthcare - Amsterdam Memorial Campus",93.4,6.2,0.0,0.4],
+    ['Margaretville Hospital',93.0,6.0,1.0,0.0],
+    ['UVM Health Network - Alice Hyde Medical Center',92.3,6.7,0.7,0.2],
+    ['UVM Health Network - Elizabethtown Community Hospital',92.3,5.6,0.8,1.4],
+    ['Cobleskill Regional Hospital',91.9,5.1,1.3,1.8],
+    ["St. Peter's Addiction Recovery Center",90.2,9.1,0.8,0.0],
+    ["O'Connor Hospital",90.0,5.0,1.1,3.9],
+    ['Delaware Valley Hospital Inc',89.4,7.2,0.6,2.8],
+    ['A.O. Fox Memorial Hospital',88.5,10.2,0.9,0.5],
+    ['Nathan Littauer Hospital',86.5,12.0,1.4,0.2],
+    ['Sunnyview Hospital and Rehabilitation Center',83.9,12.3,0.4,3.3],
+  ];
+  const legend = Object.keys(payerColors).map(k=>`<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;font-size:11px;color:var(--text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:${payerColors[k]};display:inline-block;"></span>${k}</span>`).join('');
+  const bars = facs.map(f=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+    <div style="width:180px;font-size:11px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f[0]}</div>
+    <div style="flex:1;display:flex;height:14px;border-radius:3px;overflow:hidden;background:var(--surface-0);">
+      <div style="width:${f[1]}%;background:${payerColors.Government};"></div>
+      <div style="width:${f[2]}%;background:${payerColors.Commercial};"></div>
+      <div style="width:${f[3]}%;background:${payerColors['Self-Pay']};"></div>
+      <div style="width:${f[4]}%;background:${payerColors.Other};"></div>
+    </div>
+    <div style="width:38px;font-size:11px;color:var(--text-secondary);text-align:right;">${f[1].toFixed(0)}%</div></div>`).join('');
+  const bandHeaders=[{label:'Medicaid estimate'},{label:'Share',num:1},{label:'Assumption'}];
+  const bandRows=[
+    ['Reported floor','16.38%','"Managed Care, Unspecified" counted as commercial'],
+    ['Central estimate (adjusted midpoint)','23.66%','68% of the ambiguous bucket is Medicaid MCO (NY rate, KFF/CMS 2024)'],
+    ['Ceiling (all-MCO)','27.09%','All "Managed Care, Unspecified" is Medicaid managed care'],
+  ];
+  const bandCaption = `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.6;">"Managed Care, Unspecified" (10.7% of discharges) may include Medicaid managed care with no way to split it at the row level; the band shows the range rather than presenting 16.4% as a clean fact.</div>`;
+  return `${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Discharges and government share by facility and payer category (top 12 shown)')+`<div style="margin-bottom:8px;">${legend}</div>${bars}<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">+12 more facilities, sorted by government share</div>`)}
+    ${panel(panelTitle('Medicaid share and discharges by facility and sub region')+`<div style="position:relative;height:280px;"><canvas id="scatter4" role="img" aria-label="Bubble chart of Medicaid share by facility discharge volume, colored by sub region">24 facilities plotted by Medicaid share and discharge volume; St. Peter's Hospital - SPARC and Albany Medical Center Hospital sit at opposite extremes.</canvas></div>`)}
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    ${panel(panelTitle('Medicaid share — sensitivity band')+dataTable(bandHeaders, bandRows)+bandCaption, 2)}
+  </div>`;
+};
+
+// ---------------- PAGE 5: Length of stay ----------------
+PAGES.p5 = () => {
+  const kpis = [{value:'5.45',label:'Avg length of stay (days)'},{value:'3.00',label:'Median length of stay (days)'},{value:'0.04%',label:'Pct censored stays'}];
+  const sev = ['Extreme','Major','Moderate','Minor','Undetermined'];
+  const sm = {
+    'Capital District':[12.64,6.74,4.49,2.87,4.77],
+    'Central NY / Catskill Foothills':[11.69,6.29,4.39,3.37,0],
+    'Mohawk Valley':[7.64,5.40,4.90,3.80,5.00],
+    'North Country / Adirondack':[12.13,6.86,4.65,2.84,1.25],
+  };
+  const maxlos = 12.64;
+  const smPanels = SUBREGIONS.map((sr)=>`<div style="flex:1;min-width:150px;">
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px;">${sr}</div>
+    ${sev.map((s,j)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;"><div style="width:76px;font-size:10px;color:var(--text-muted);">${s}</div><div style="flex:1;">${hbar(sm[sr][j]/maxlos*100, REGION_COLOR[sr])}</div><div style="width:26px;font-size:10px;color:var(--text-secondary);text-align:right;">${sm[sr][j]||'—'}</div></div>`).join('')}
+  </div>`).join('');
+  const matHeaders=[{label:'Facility'},{label:'Severity'},{label:'Discharges',num:1},{label:'Avg LOS',num:1},{label:'Median LOS',num:1},{label:'Pct censored',num:1}];
+  const matRows=[
+    ['Albany Medical Center Hospital','Extreme','4,227','16.07','11.00','0.35%'],
+    ['Albany Medical Center Hospital','Major','12,935','7.31','5.00','0.03%'],
+    ['Saratoga Hospital','Extreme','1,102','9.84','7.00','0.09%'],
+    ['Nathan Littauer Hospital','Extreme','218','8.91','6.00','0.00%'],
+  ];
+  const disp = {
+    'Capital District':[78.8,11.9,4.2,2.5,2.7],'Central NY / Catskill Foothills':[72.1,17.9,4.2,4.1,1.7],
+    'Mohawk Valley':[70.1,16.6,4.1,5.8,3.4],'North Country / Adirondack':[76.3,12.9,4.9,4.2,1.8],
+  };
+  const dispLabels=['Home','Post-acute facility','Hospice/expired','Transfer to another hospital','Other/unplanned'];
+  const DISPOSITION_COLOR = {'Home':PALETTE.green,'Post-acute facility':PALETTE.sky,'Hospice/expired':PALETTE.taupe,'Transfer to another hospital':PALETTE.navy,'Other/unplanned':PALETTE.gold};
+  const dispColors=dispLabels.map(l=>DISPOSITION_COLOR[l]);
+  const dispLegend = dispLabels.map((l,i)=>`<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px;font-size:11px;color:var(--text-secondary);"><span style="width:9px;height:9px;border-radius:2px;background:${dispColors[i]};display:inline-block;"></span>${l}</span>`).join('');
+  const dispBars = SUBREGIONS.map(sr=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+    <div style="width:150px;font-size:11px;color:var(--text-primary);">${sr}</div>
+    <div style="flex:1;display:flex;height:16px;border-radius:3px;overflow:hidden;">${disp[sr].map((v,i)=>`<div style="width:${v}%;background:${dispColors[i]};"></div>`).join('')}</div></div>`).join('');
+  return `${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Avg length of stay (days) by severity and sub region')+`<div style="display:flex;gap:14px;flex-wrap:wrap;">${smPanels}</div>`, 3)}
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    ${panel(panelTitle('Length of stay by facility and severity (illustrative rows)')+dataTable(matHeaders, matRows))}
+    ${panel(panelTitle('Discharges by sub region and patient disposition group')+`<div style="margin-bottom:8px;">${dispLegend}</div>${dispBars}`)}
+  </div>`;
+};
+
+// ---------------- PAGE 6: Urban vs rural utilization ----------------
+PAGES.p6 = () => {
+  const kpis = [{value:'61.85%',label:'ED utilization pct'},{value:'37.22%',label:'High severity pct'}];
+  const rows = [
+    ['Capital District','97,911','68.18%','59.40%','38.46%','5.56','$15,434.06','1,080.70'],
+    ['Central NY / Catskill Foothills','15,275','10.64%','61.86%','37.45%','5.28','$20,616.93','783.68'],
+    ['Mohawk Valley','6,347','4.42%','71.50%','32.85%','4.90','$11,307.33','623.96'],
+    ['North Country / Adirondack','24,080','16.77%','69.23%','33.18%','5.26','$15,281.11','1,058.69'],
+  ];
+  const total = ['Total','143,613','100.00%','61.85%','37.22%','5.45','$15,777.29','1,004.23'];
+  const headers=[{label:'Sub region'},{label:'Discharges',num:1},{label:'Pct of volume',num:1},{label:'ED util %',num:1},{label:'High severity %',num:1},{label:'Avg LOS',num:1},{label:'Avg cost/discharge',num:1},{label:'Discharges/10k pop',num:1}];
+  const maxes = [97911,68.18,71.50,38.46,5.56,20616.93,1080.70];
+  function buildRow(r){
+    let cells = `<td style="padding:6px 8px;font-size:12px;font-weight:600;color:var(--text-primary);border-bottom:0.5px solid var(--border);white-space:nowrap;">${r[0]}</td>`;
+    const vals = [parseFloat(r[1].replace(/,/g,'')), parseFloat(r[2]), parseFloat(r[3]), parseFloat(r[4]), parseFloat(r[5]), parseFloat(r[6].replace(/[$,]/g,'')), parseFloat(r[7].replace(/,/g,''))];
+    for(let i=0;i<7;i++){ cells += matrixCell(vals[i], r[i+1], maxes[i], PALETTE.accent); }
+    return `<tr>${cells}</tr>`;
+  }
+  const bodyRows = rows.map(buildRow).join('');
+  const totalCells = `<td style="padding:6px 8px;font-size:12px;font-weight:600;border-top:1px solid var(--border-stronger);font-variant-numeric:tabular-nums;">Total</td>` + total.slice(1).map(c=>`<td style="padding:6px 8px;font-size:12px;font-weight:600;text-align:right;border-top:1px solid var(--border-stronger);font-variant-numeric:tabular-nums;">${c}</td>`).join('');
+  const headerRow = headers.map(h=>`<th style="text-align:${h.num?'right':'left'};font-size:11px;color:var(--text-secondary);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border-strong);white-space:nowrap;">${h.label}</th>`).join('');
+  const matrix = `<div style="overflow-x:auto;"><table style="border-collapse:collapse;width:100%;"><thead><tr>${headerRow}</tr></thead><tbody>${bodyRows}<tr>${totalCells}</tr></tbody></table></div>`;
+  const footnote = `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.6;">Per-capita = discharges at in-region hospitals ÷ in-region residents; the two populations are not identical (patients travel, and <code>hospital_county</code> is the facility's county, not the patient's). Directional only.</div>`;
+  return `${kpiRow(kpis)}
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    ${panel(panelTitle('Regional utilization scorecard')+matrix+footnote, 3)}
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+    ${panel(panelTitle('Mohawk Valley: lowest per-capita utilization, highest ED share')+`<div style="font-size:12px;line-height:1.7;color:var(--text-primary);">Mohawk Valley shows the lowest discharges-per-resident of any sub region (623.96 per 10,000 population, by hospital location, versus 1,080.70 in Capital District) and the highest ED-utilization share (71.50% of its discharges originate in the ED, versus 59.40% in Capital District). Because this counts discharges where the hospital sits, not where the patient lives, the pattern is <strong>consistent with</strong> residents leaving the region for planned inpatient care and/or constrained non-emergency access — it is a signal to investigate, not a settled utilization rate. Treated as a hypothesis rather than a conclusion pending patient-residence data the de-identified extract does not carry.</div>`, 3)}
+  </div>`;
+};
+
+const PAGE_META = [
+  ['p1','Executive summary'],['p2','Cost concentration (Q1)'],['p3','Charge-to-cost ratio (Q2)'],
+  ['p4','Payer mix and Medicaid exposure (Q3)'],['p5','Length of stay by facility and severity (Q4)'],['p6','Urban vs rural utilization (Q5)'],
+];
+const EXTRA_SLICERS = {p4:[['Payer category','All']], p6:[['ED indicator','All'],['Type of admission','All']]};
+
+const tabsEl = document.getElementById('tabs');
+const pagesEl = document.getElementById('pages');
+PAGE_META.forEach(([id,label])=>{
+  const btn = document.createElement('button');
+  btn.textContent = label;
+  btn.dataset.id = id;
+  btn.style.cssText = 'font-size:12px;padding:6px 12px;';
+  btn.onclick = ()=>showPage(id);
+  tabsEl.appendChild(btn);
+});
+
+function showPage(id){
+  const meta = PAGE_META.find(p=>p[0]===id);
+  pagesEl.innerHTML = `<h3 style="margin:0 0 10px;">${meta[1]}</h3>${slicerBar(EXTRA_SLICERS[id])}${PAGES[id]()}`;
+  [...tabsEl.children].forEach(b=>{
+    b.style.background = b.dataset.id===id ? 'var(--bg-accent)' : 'var(--surface-2)';
+    b.style.color = b.dataset.id===id ? 'var(--text-accent)' : 'var(--text-secondary)';
+    b.style.border = '0.5px solid var(--border)';
+    b.style.borderRadius = 'var(--radius)';
+  });
+  if(id==='p2') drawPage2Charts();
+  if(id==='p3') drawPage3Charts();
+  if(id==='p4') drawPage4Charts();
+}
+
+function drawPage2Charts(){
+  new Chart(document.getElementById('pareto'), {
+    data: {
+      labels: ['Major','Moderate','Extreme','Minor','Undetermined'],
+      datasets: [
+        {type:'bar', label:'Total costs ($M)', data:[721.9,642.2,559.2,342.3,0.1], backgroundColor:['Major','Moderate','Extreme','Minor','Undetermined'].map(t=>SEVERITY_RAMP[t]), yAxisID:'y'},
+        {type:'line', label:'Cumulative %', data:[31.9,60.2,84.9,100,100], borderColor:PALETTE.navy, backgroundColor:PALETTE.navy, yAxisID:'y1', tension:0.2},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{y:{position:'left',title:{display:true,text:'$M'}}, y1:{position:'right',min:0,max:100,grid:{drawOnChartArea:false},title:{display:true,text:'Cumulative %'}}},
+      plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:10}}}}}
+  });
+  // 2026-07-16 fix: this chart was normalized to a 0-100% stacked share
+  // per severity tier ('% of tier cost'), but the live Power BI visual
+  // ('Total Costs' on the Y-axis, apr_severity_of_illness x-axis,
+  // apr_risk_of_mortality legend/stack) plots actual stacked dollars, not a
+  // normalized percentage -- so the mockup's axis/shape didn't match. The
+  // within-tier percentage SPLITS were already correct (verified against
+  // fact_discharges.csv); only the axis needed converting from % back to
+  // $M, and the x-axis order corrected to match the now-fixed Power BI
+  // clinical order (Extreme, Major, Moderate, Minor, Undetermined; see
+  // docs/decisions.md 2026-07-16 sort-order entries).
+  new Chart(document.getElementById('rom'), {
+    type:'bar',
+    data:{labels:['Extreme','Major','Moderate','Minor','Undetermined'],
+      datasets:[
+        {label:'Minor risk',data:[1.8,54.8,310.6,304.1,0.0],backgroundColor:MORTALITY_RAMP.Minor},
+        {label:'Moderate risk',data:[9.0,162.8,248.5,35.8,0.0],backgroundColor:MORTALITY_RAMP.Moderate},
+        {label:'Major risk',data:[101.3,427.1,82.3,2.4,0.0],backgroundColor:MORTALITY_RAMP.Major},
+        {label:'Extreme risk',data:[447.1,77.3,0.9,0.0,0.0],backgroundColor:MORTALITY_RAMP.Extreme},
+        {label:'Undetermined risk',data:[0.0,0.0,0.0,0.0,0.1],backgroundColor:MORTALITY_RAMP.Undetermined},
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,title:{display:true,text:'Total Costs ($M)'}}},plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:9}}}}}
+  });
+  new Chart(document.getElementById('drgcurve'), {
+    type:'line',
+    data:{labels:['1','25','50','75','100','150','200','250','324'],
+      datasets:[{label:'Cumulative % of cost',data:[9.8,44.1,62.4,73.7,81.5,90.7,95.9,98.7,100.0],borderColor:PALETTE.accent,backgroundColor:'rgba(20,108,108,0.12)',fill:true,tension:0.3,pointRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100,title:{display:true,text:'Cumulative %'}},x:{title:{display:true,text:'DRGs, ranked by cost'}}},plugins:{legend:{display:false}}}
+  });
+}
+
+function drawPage3Charts(){
+  const fac = [
+    ['Saratoga Hospital','Capital District',4.78,10341],['Samaritan Hospital','Capital District',3.89,9912],
+    ['Albany Medical Center Hospital','Capital District',3.38,36882],['Ellis Hospital','Capital District',3.27,9552],
+    ["St. Peter's Hospital",'Capital District',3.14,24768],['Columbia Memorial Hospital','Central NY / Catskill Foothills',2.92,3051],
+    ['Nathan Littauer Hospital','Mohawk Valley',2.91,2282],['UVM - Alice Hyde Medical Center','North Country / Adirondack',2.91,835],
+    ['UVM - Champlain Valley Physicians Hospital','North Country / Adirondack',2.73,8072],['Glens Falls Hospital','North Country / Adirondack',2.70,12271],
+    ["St. Peter's Addiction Recovery Center",'Capital District',2.50,397],['Delaware Valley Hospital Inc','Central NY / Catskill Foothills',2.47,180],
+    ["St. Mary's Healthcare",'Mohawk Valley',2.41,3806],["St. Peter's Hospital - SPARC",'Capital District',2.28,266],
+    ['Sunnyview Hospital and Rehab Center','Capital District',2.16,2245],["Ellis Hospital - Bellevue Woman's Care",'Capital District',2.07,3548],
+    ['Adirondack Medical Center - Saranac Lake','North Country / Adirondack',1.99,2166],['Margaretville Hospital','Central NY / Catskill Foothills',1.84,100],
+    ["St. Mary's Healthcare - Amsterdam Campus",'Mohawk Valley',1.68,259],['A.O. Fox Memorial Hospital','Central NY / Catskill Foothills',1.58,1399],
+    ['Cobleskill Regional Hospital','Central NY / Catskill Foothills',1.48,455],['Mary Imogene Bassett Hospital','Central NY / Catskill Foothills',1.31,9910],
+    ['UVM - Elizabethtown Community Hospital','North Country / Adirondack',1.20,736],["O'Connor Hospital",'Central NY / Catskill Foothills',1.03,180],
+  ];
+  const bySub = {};
+  fac.forEach(f=>{ (bySub[f[1]] = bySub[f[1]]||[]).push({x:f[2],y:f[3],r:Math.sqrt(f[3])/8+3,label:f[0]}); });
+  new Chart(document.getElementById('scatter3'), {
+    type:'bubble',
+    data:{datasets:Object.keys(bySub).map((sr)=>({label:sr,data:bySub[sr],backgroundColor:REGION_COLOR[sr]+'99'}))},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{title:{display:true,text:'Charge to cost ratio'},min:0.5,max:5.2},y:{title:{display:true,text:'Discharges'},min:-2000,max:40000}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.raw.label+': '+c.raw.x.toFixed(2)+', '+c.raw.y+' discharges'}}}}
+  });
+}
+
+function drawPage4Charts(){
+  const fac = [
+    ["St. Peter's Hospital - SPARC",'Capital District',78.9,266],["St. Mary's Healthcare - Amsterdam Campus",'Mohawk Valley',36.3,259],
+    ['Margaretville Hospital','Central NY / Catskill Foothills',1.0,100],['UVM - Alice Hyde Medical Center','North Country / Adirondack',14.3,835],
+    ['UVM - Elizabethtown Community Hospital','North Country / Adirondack',6.5,736],['Ellis Hospital','Capital District',19.2,9552],
+    ['Samaritan Hospital','Capital District',27.0,9912],['Nathan Littauer Hospital','Mohawk Valley',30.1,2282],
+    ["St. Mary's Healthcare",'Mohawk Valley',28.3,3806],['Saratoga Hospital','Capital District',14.0,10341],
+    ['Albany Medical Center Hospital','Capital District',4.8,36882],["Ellis Hospital - Bellevue Woman's Care",'Capital District',38.0,3548],
+    ['Mary Imogene Bassett Hospital','Central NY / Catskill Foothills',16.2,9910],['Glens Falls Hospital','North Country / Adirondack',20.7,12271],
+    ['A.O. Fox Memorial Hospital','Central NY / Catskill Foothills',6.4,1399],['Adirondack Medical Center - Saranac Lake','North Country / Adirondack',14.7,2166],
+    ['Cobleskill Regional Hospital','Central NY / Catskill Foothills',7.9,455],['Columbia Memorial Hospital','Central NY / Catskill Foothills',15.4,3051],
+    ['Delaware Valley Hospital Inc','Central NY / Catskill Foothills',14.4,180],["O'Connor Hospital",'Central NY / Catskill Foothills',9.4,180],
+    ["St. Peter's Addiction Recovery Center",'Capital District',73.3,397],["St. Peter's Hospital",'Capital District',20.8,24768],
+    ['Sunnyview Hospital and Rehab Center','Capital District',7.8,2245],['UVM - Champlain Valley Physicians Hospital','North Country / Adirondack',18.6,8072],
+  ];
+  const bySub = {};
+  fac.forEach(f=>{ (bySub[f[1]] = bySub[f[1]]||[]).push({x:f[2],y:f[3],r:Math.sqrt(f[3])/8+3,label:f[0]}); });
+  new Chart(document.getElementById('scatter4'), {
+    type:'bubble',
+    data:{datasets:Object.keys(bySub).map((sr)=>({label:sr,data:bySub[sr],backgroundColor:REGION_COLOR[sr]+'99'}))},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{title:{display:true,text:'Medicaid share %'},min:-5,max:85},y:{title:{display:true,text:'Discharges'},min:-2000,max:40000}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.raw.label+': '+c.raw.x.toFixed(1)+'%, '+c.raw.y+' discharges'}}}}
+  });
+}
+
+showPage('p1');
+</script>
+</body>
+</html>

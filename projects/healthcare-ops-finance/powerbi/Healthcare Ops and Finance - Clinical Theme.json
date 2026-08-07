@@ -1,0 +1,161 @@
+{
+  "name": "Healthcare Ops & Finance, Clinical",
+  "dataColors": [
+    "#2C5F8A",
+    "#3B82C4",
+    "#2E9E4E",
+    "#AD8A1C",
+    "#C1391F",
+    "#C15E86",
+    "#8B7EC8",
+    "#8A6B4F"
+  ],
+  "background": "#FFFFFF",
+  "backgroundLight": "#EEF2F3",
+  "backgroundNeutral": "#E2E8EC",
+  "foreground": "#16232E",
+  "foregroundNeutralSecondary": "#526271",
+  "foregroundNeutralTertiary": "#647280",
+  "tableAccent": "#146C6C",
+  "good": "#2C8655",
+  "neutral": "#9A6F18",
+  "bad": "#CC4A30",
+  "maximum": "#146C6C",
+  "center": "#7FB8B4",
+  "minimum": "#C9E0DE",
+  "null": "#9AA5AF",
+  "textClasses": {
+    "label": {
+      "fontFace": "Calibri",
+      "fontSize": 9,
+      "color": "#526271"
+    },
+    "callout": {
+      "fontFace": "Calibri",
+      "fontSize": 16,
+      "color": "#16232E"
+    },
+    "title": {
+      "fontFace": "Calibri",
+      "fontSize": 12,
+      "color": "#526271"
+    },
+    "header": {
+      "fontFace": "Calibri",
+      "fontSize": 18,
+      "color": "#16232E"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "border": [
+          {
+            "show": true,
+            "color": { "solid": { "color": "#E2E8EC" } },
+            "radius": 4
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": { "solid": { "color": "#F5F8F9" } },
+            "transparency": 0
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "categoryLabel": [
+          {
+            "color": { "solid": { "color": "#526271" } },
+            "fontSize": 10,
+            "fontFamily": "Calibri"
+          }
+        ],
+        "labels": [
+          {
+            "color": { "solid": { "color": "#16232E" } },
+            "fontSize": 16,
+            "fontFamily": "Calibri",
+            "bold": true
+          }
+        ]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "backgroundColor": { "solid": { "color": "#EEF2F3" } },
+            "fontFamily": "Calibri",
+            "bold": true,
+            "fontSize": 9
+          }
+        ],
+        "values": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "backgroundColor": { "solid": { "color": "#FFFFFF" } },
+            "fontFamily": "Calibri",
+            "fontSize": 9
+          }
+        ],
+        "grid": [
+          {
+            "gridVertical": false,
+            "gridHorizontalColor": { "solid": { "color": "#E2E8EC" } },
+            "rowPadding": 8
+          }
+        ]
+      }
+    },
+    "pivotTable": {
+      "*": {
+        "columnHeaders": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "backgroundColor": { "solid": { "color": "#EEF2F3" } },
+            "fontFamily": "Calibri",
+            "bold": true,
+            "fontSize": 9
+          }
+        ],
+        "values": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "backgroundColor": { "solid": { "color": "#FFFFFF" } },
+            "fontFamily": "Calibri",
+            "fontSize": 9
+          }
+        ]
+      }
+    },
+    "slicer": {
+      "*": {
+        "header": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "background": { "solid": { "color": "#FFFFFF" } },
+            "fontFamily": "Calibri",
+            "fontSize": 13,
+            "bold": true
+          }
+        ],
+        "items": [
+          {
+            "fontColor": { "solid": { "color": "#16232E" } },
+            "background": { "solid": { "color": "#FFFFFF" } },
+            "fontFamily": "Calibri",
+            "fontSize": 12
+          }
+        ]
+      }
+    }
+  }
+}

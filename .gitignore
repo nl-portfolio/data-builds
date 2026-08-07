@@ -1,0 +1,27 @@
+# Raw and interim data are regenerable (public API pull / local pipeline run),
+# so they are not committed. Processed marts ARE committed so results are
+# visible without re-running anything. See each project's docs/decisions.md.
+data/raw/
+data/interim/
+*.duckdb
+*.duckdb.wal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Power BI temp / cache
+*.tmp
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Leftover build artifact, safe to delete manually (unrelated to the repo)
+.git-broken-attempt-1/
+
+# Source screenshots staged here before being renamed into
+# projects/healthcare-ops-finance/outputs/; safe to delete once confirmed
+visuals/
