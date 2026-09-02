@@ -25,12 +25,9 @@ schema, and validating every headline number twice.
 | Build | What it is | Detail level |
 |---|---|---|
 | [Diagnosing Rural Hospital Risk](DATA-01-healthcare-ops-finance/) | A six-page Power BI dashboard on 143,613 real 2024 NY hospital discharge records, built as a validated star schema and read the way a health insurer's medical-economics team would read it. Complete pipeline from raw API pull through star schema to dashboard. | Full technical (raw pull script, every SQL layer, all decisions, Power BI file, case study included) |
+| [B2B Sales & Finance Analysis](DATA-02-b2b-sales-finance/) | Unit economics and sales cohort analysis on 900 companies, 2,600 opportunities, 26 months of synthetic data. Findings: enterprise segment win rate dropped 35.2% → 10.2% while blended rate remained healthy. Three Jupyter notebooks with exploratory, unit economics, and diagnostic analysis. | Full technical (complete data generation pipeline, three analysis notebooks, findings summary, data dictionary) |
 
-Each project includes the full pipeline: `data/` (raw and processed), `sql/` (staging → dimensions → facts → marts), `docs/` (decisions and data dictionary), `src/` (Python pipeline scripts), `powerbi/` (dashboard and theme files), and `case-study.md` (write-up).
-
-### In Development
-
-- **DATA-02: B2B Sales Finance** — Completing final review and publication. Synthetic dataset: 900 companies, 2,600 opportunities, 26 months. Finding: enterprise segment collapsed (35.2% → 10.2%) while blended win rate stayed healthy. See `PORTFOLIO_LOG.md` for status.
+Each project includes the full pipeline: `data/` (raw and processed), `sql/` (staging → dimensions → facts → marts), `docs/` (decisions and data dictionary), `src/` (Python pipeline scripts), `notebooks/` (analysis and exploration), and `case-study.md` (write-up).
 
 ---
 
