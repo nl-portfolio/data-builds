@@ -1,0 +1,17 @@
+# Raw data (large, re-fetchable)
+data/raw/
+*.csv
+
+# Build artifacts
+*.pyc
+__pycache__/
+*.ipynb_checkpoints/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+Thumbs.db

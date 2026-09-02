@@ -20,12 +20,17 @@ schema, and validating every headline number twice.
 
 ## What is in here
 
+### Published
+
 | Build | What it is | Detail level |
 |---|---|---|
-| [Healthcare Operations & Finance Dashboard](case-studies/01-healthcare-ops-finance.md) | A six-page Power BI dashboard on 143,613 real 2024 NY hospital discharge records, built as a validated star schema and read the way a health insurer's medical-economics team would read it | Full technical (pipeline, SQL, and dashboard included) |
+| [Diagnosing Rural Hospital Risk](DATA-01-healthcare-ops-finance/) | A six-page Power BI dashboard on 143,613 real 2024 NY hospital discharge records, built as a validated star schema and read the way a health insurer's medical-economics team would read it. Complete pipeline from raw API pull through star schema to dashboard. | Full technical (raw pull script, every SQL layer, all decisions, Power BI file, case study included) |
 
-The project code, SQL, docs, and dashboard file live in
-[`projects/`](projects/).
+Each project includes the full pipeline: `data/` (raw and processed), `sql/` (staging → dimensions → facts → marts), `docs/` (decisions and data dictionary), `src/` (Python pipeline scripts), `powerbi/` (dashboard and theme files), and `case-study.md` (write-up).
+
+### In Development
+
+- **DATA-02: B2B Sales Finance** — Completing final review and publication. Synthetic dataset: 900 companies, 2,600 opportunities, 26 months. Finding: enterprise segment collapsed (35.2% → 10.2%) while blended win rate stayed healthy. See `PORTFOLIO_LOG.md` for status.
 
 ---
 
