@@ -2,8 +2,8 @@
 
 **Analyst:** Neyda Larson  
 **Written:** 2026-09-02  
-**Committed:** [timestamp and commit hash added at public push]  
-**Status:** Locked on public commit. All amendments thereafter are dated and recorded in this file.
+**Committed:** 2026-09-02 19:18 UTC, commit 238c6c8  
+**Status:** Locked on public commit. All amendments thereafter are dated and recorded in this file. **Amendment 1 (2026-09-03):** disclosure that the MDE grid was conservative for the realised data; no analysis change. See "Amendments" at the end.
 
 ---
 
@@ -351,5 +351,64 @@ Any changes to the pre-registration after this document is committed to the publ
 ## Amendments
 
 [This section records all changes made after the public commit. The plan cannot be changed silently; every amendment is dated and explained here.]
+
+### Amendment 1 — 2026-09-03 — The MDE grid was conservative for the realised data (disclosure, no analysis change)
+
+**What changed:** Nothing in the analysis. This amendment records that the
+Minimum Detectable Effect grid in the "Minimum detectable effect" section above
+**understated the experiment's power** for the primary outcome, and states the
+correct design effect.
+
+**Why:** The grid was built (arm-blind, as required) on two assumptions that the
+realised data did not bear out:
+
+1. **Assumed baseline rates of 5–25%** for item nonresponse. The realised
+   weighted item-nonresponse rate is **~1.4%** (mean of per-respondent rates) /
+   ~2.0% (ratio of sums) — below the grid's lowest row.
+2. **`p(1−p)` as the per-respondent variance** in the MDE formula
+   (`MDE = 2.8·√(p(1−p)(1/n₁ + 1/n₂))·√DEFF`). For a stable low rate the
+   per-respondent rate's actual weighted variance is roughly **9× smaller** than
+   `p(1−p)`, because most respondents cluster near a low rate rather than being
+   Bernoulli(p) at the item level aggregated up.
+
+**The design effect.** The grid assumed a design effect of 1.2–1.5. Phase 4b
+measured the design effect **for the per-respondent rate estimator** — the
+`survey::svymean(deff = TRUE)` quantity, jackknife variance over the
+SRS-of-the-rate variance — at **1.56 (Family A) / 1.44 (Family C) /
+2.93 (Family B, web)**, confirmed independently in R. This is close to the grid's
+assumption and immaterial to the MDE.
+
+**On the "≈ 3.3" figure.** An earlier informal check (referenced in the incident
+record and in `STAKEHOLDER_NARRATIVE.md`) put the design effect near 3.3 and
+raised the concern that the experiment was underpowered to answer its own
+question. **That 3.3 was the Kish weight design effect** — `1 + CV²(weights)`,
+a whole-sample summary of weight variability (effective n ≈ 2,244, DEFF ≈ 3.24)
+— **not the design effect of the estimator actually used.** It is a
+conservative proxy computed when the replicate weights are not in hand; here the
+replicate weights are in hand and give ~1.5. The 3.3 figure should not be cited
+as this analysis's design effect.
+
+**Consequence, applied by the pre-registered verdict rule (Phase 5b):** the real
+empirical MDE for the primary outcome is **≈ 0.32 pp** (2.8 × the observed
+jackknife SE of the arm difference), against a grid that implied 1.8–4.0 pp. The
+observed H1 effect (0.21 pp, 95% CI [−0.44, +0.01], p = 0.063 uncorrected) is
+below that MDE and the MDE is well under the plan's 3 pp "informative" bar, so
+by the plan's own rule the H1 result is an **informative null**, not an
+underpowered one. Break-off (H2) and the very rare response-error outcome (H3)
+remain genuinely underpowered for plausible effects, as the grid implied.
+
+**Effect on interpretation:** This makes the primary null *stronger* — the
+experiment could have detected an item-nonresponse effect several times smaller
+than the plan claimed was detectable. It does not change any estimate, test,
+outcome definition, multiplicity family, or verdict rule. The grid rows above
+are left in place as written; this amendment is the correction of record.
+
+**Timestamp note:** This amendment is appended to the source copy on
+2026-09-03. The public repo copy
+(`Brand_and_Portfolio/data-builds/DATA-03-hints-commitment-experiment/docs/pre-registration.md`)
+must receive the identical amendment and a dated public commit at Phase 7
+publication (or sooner, at Neyda's discretion), so the amendment carries a
+public timestamp the way the original lock does. The Phase 5b agent does not
+write outside the containment folder.
 
 ---
