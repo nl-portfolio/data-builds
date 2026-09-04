@@ -6,7 +6,9 @@ This repository contains the pre-registered analysis plan for a re-analysis of t
 
 ## Status
 
-Analysis plan is locked and committed to version control. Data analysis has not yet run.
+Analysis plan is locked and committed to version control (commit `238c6c8`, 2026-09-02), before any treatment-arm statistic was computed.
+
+The analysis has since been run. Full results, the case study, and the supporting code are not published here yet. One result is already public in this repository: Amendment 1 to the pre-registration, appended 2026-09-03, discloses the primary outcome's observed effect and minimum detectable effect, because the amendment's subject is whether the pre-registered MDE grid understated the experiment's power and that question cannot be documented without the realized numbers. Read it as a disclosure attached to the plan, not as the writeup.
 
 ## Pre-registration
 
