@@ -1,0 +1,113 @@
+﻿table sensitivity_web_never_seen
+	lineageTag: 2cdb395f-e488-4f74-8443-59a66f656005
+
+	column hypothesis
+		dataType: string
+		lineageTag: 6940559d-7098-4409-b3e3-a6b408979f3a
+		summarizeBy: none
+		sourceColumn: hypothesis
+
+		annotation SummarizationSetBy = Automatic
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: 7ad9cf4f-b0a6-4dfc-abce-2df583b9dcb6
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column spec
+		dataType: string
+		lineageTag: 79a5bbf0-0556-4116-923d-3e8bcb962668
+		summarizeBy: none
+		sourceColumn: spec
+
+		annotation SummarizationSetBy = Automatic
+
+	column primary_diff_pp
+		dataType: double
+		lineageTag: 257fb435-77a8-472d-9d75-c82b589a9b84
+		summarizeBy: sum
+		sourceColumn: primary_diff_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column primary_ci_pp
+		dataType: string
+		lineageTag: 29842c86-5711-4128-ad7f-2e670ee1e70c
+		summarizeBy: none
+		sourceColumn: primary_ci_pp
+
+		annotation SummarizationSetBy = Automatic
+
+	column primary_p
+		dataType: double
+		lineageTag: 42d52832-e467-48e8-a734-be1e392353d0
+		summarizeBy: sum
+		sourceColumn: primary_p
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sensitivity_diff_pp
+		dataType: double
+		lineageTag: af58c31b-e273-4c4f-87b4-bc35947fc11e
+		summarizeBy: sum
+		sourceColumn: sensitivity_diff_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sensitivity_ci_pp
+		dataType: string
+		lineageTag: cd581172-0cdc-4723-81e1-4c227493ba1f
+		summarizeBy: none
+		sourceColumn: sensitivity_ci_pp
+
+		annotation SummarizationSetBy = Automatic
+
+	column sensitivity_p
+		dataType: double
+		lineageTag: 9557a764-b380-47df-b9e2-c4d9a512ab70
+		summarizeBy: sum
+		sourceColumn: sensitivity_p
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sign_agrees
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ce5662e4-175c-4e70-ad9c-94d2b8acc983
+		summarizeBy: none
+		sourceColumn: sign_agrees
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'both_null_at_0.05'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: e645b34a-9003-4ebb-a9b8-aed397764366
+		summarizeBy: none
+		sourceColumn: both_null_at_0.05
+
+		annotation SummarizationSetBy = Automatic
+
+	partition sensitivity_web_never_seen = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\sensitivity_web_never_seen.csv"),[Delimiter=",", Columns=11, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis", type text}, {"hypothesis_id", type text}, {"spec", type text}, {"primary_diff_pp", type number}, {"primary_ci_pp", type text}, {"primary_p", type number}, {"sensitivity_diff_pp", type number}, {"sensitivity_ci_pp", type text}, {"sensitivity_p", type number}, {"sign_agrees", type logical}, {"both_null_at_0.05", type logical}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

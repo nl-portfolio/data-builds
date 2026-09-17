@@ -1,0 +1,6 @@
+hypothesis,hypothesis_id,p_uncorrected,holm_threshold,p_holm,reject_at_familywise_0.05
+mode interaction: A item nonresponse,H1,0.05671580799516137,0.01,0.28357903997580686,False
+H1 item nonresponse,H1,0.06317438732143646,0.0125,0.28357903997580686,False
+H2 break-off (web only),H2,0.23372912759877917,0.016666666666666666,0.7011873827963375,False
+mode interaction: C response error,H3,0.5963262919455495,0.025,1.0,False
+H3 response error,H3,0.6171894714333517,0.05,1.0,False

@@ -1,0 +1,4 @@
+hypothesis,hypothesis_id,p_uncorrected,holm_threshold,p_holm,reject_at_familywise_0.05
+H1 item nonresponse,H1,0.06317438732143646,0.016666666666666666,0.18952316196430938,False
+H2 break-off (web only),H2,0.23372912759877917,0.025,0.46745825519755835,False
+H3 response error,H3,0.6171894714333517,0.05,0.6171894714333517,False

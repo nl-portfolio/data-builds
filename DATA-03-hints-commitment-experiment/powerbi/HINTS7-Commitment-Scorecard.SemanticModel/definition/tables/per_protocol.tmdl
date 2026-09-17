@@ -1,0 +1,109 @@
+﻿table per_protocol
+	lineageTag: 498a7713-aece-49da-a388-5183630a0c95
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: cff2e640-aa15-4a82-ac00-f846b0c86496
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column group
+		dataType: string
+		lineageTag: 61cb089a-36e0-4418-b985-49e261116417
+		summarizeBy: none
+		sourceColumn: group
+
+		annotation SummarizationSetBy = Automatic
+
+	column n
+		dataType: int64
+		formatString: 0
+		lineageTag: 68ead52a-1335-4a58-a97c-d2119ab74f94
+		summarizeBy: sum
+		sourceColumn: n
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_pct
+		dataType: double
+		lineageTag: d0174a60-5eae-401c-8114-cb9ee320c72a
+		summarizeBy: sum
+		sourceColumn: rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_lo_pct
+		dataType: double
+		lineageTag: 9bd8e665-36d1-420c-98d6-7bf701d8a2c5
+		summarizeBy: sum
+		sourceColumn: ci_lo_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_hi_pct
+		dataType: double
+		lineageTag: fc25ac80-3b73-4646-a89f-012332424606
+		summarizeBy: sum
+		sourceColumn: ci_hi_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vis_order
+		dataType: string
+		lineageTag: 812a0658-5e6c-4a69-a850-9aa3b74a7177
+		summarizeBy: none
+		sourceColumn: vis_order
+		sortByColumn: ci_hi_pct
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_vis
+		dataType: string
+		lineageTag: fb82a42d-468d-483e-aa57-3cb64ebe9cb4
+		summarizeBy: none
+		sourceColumn: group_vis
+		sortByColumn: vis_order
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition per_protocol = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\per_protocol.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis_id", type text}, {"group", type text}, {"n", Int64.Type}, {"rate_pct", type number}, {"ci_lo_pct", type number}, {"ci_hi_pct", type number}}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Changed Type", "group", "group - Copy"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"group - Copy", "group_vis"}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"hypothesis_id", "group_vis", "group", "n", "rate_pct", "ci_lo_pct", "ci_hi_pct"}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Reordered Columns","Agreed (CommitmentStmt = Yes) [NON-RANDOMISED]","Agreed",Replacer.ReplaceText,{"group_vis"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","Did not agree (No or Not Ascertained) [NON-RANDOMISED]","Did not agree",Replacer.ReplaceText,{"group_vis"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","Descriptive difference (agreed - did not agree) [NON-RANDOMISED, NOT CAUSAL]","Descriptive difference",Replacer.ReplaceText,{"group_vis"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2","Declined only (CommitmentStmt = No) -- DESCRIBED, NOT TESTED","Declined only",Replacer.ReplaceText,{"group_vis"}),
+				    #"Duplicated Column1" = Table.DuplicateColumn(#"Replaced Value3", "group_vis", "group_vis - Copy"),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Duplicated Column1",{{"group_vis - Copy", "vis_order"}}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Renamed Columns1",{"hypothesis_id", "vis_order", "group_vis", "group", "n", "rate_pct", "ci_lo_pct", "ci_hi_pct"}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Reordered Columns1","Agreed","1",Replacer.ReplaceText,{"vis_order"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4","Did not agree","2",Replacer.ReplaceText,{"vis_order"}),
+				    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value5","Descriptive difference","3",Replacer.ReplaceText,{"vis_order"}),
+				    #"Replaced Value7" = Table.ReplaceValue(#"Replaced Value6","Declined only","4",Replacer.ReplaceText,{"vis_order"}),
+				    #"Sorted Rows" = Table.Sort(#"Replaced Value7",{{"vis_order", Order.Ascending}})
+				in
+				    #"Sorted Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

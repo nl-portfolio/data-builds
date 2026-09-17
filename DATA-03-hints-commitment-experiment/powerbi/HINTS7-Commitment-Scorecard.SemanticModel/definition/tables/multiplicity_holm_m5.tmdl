@@ -1,0 +1,70 @@
+﻿table multiplicity_holm_m5
+	lineageTag: 96c99cf5-a5a5-43f8-bf5e-894540cdfeee
+
+	column hypothesis
+		dataType: string
+		lineageTag: 330c01b8-d67c-431f-ba2c-973aa4296677
+		summarizeBy: none
+		sourceColumn: hypothesis
+
+		annotation SummarizationSetBy = Automatic
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: 4a7910d8-6f57-4649-9443-f598c6c3d784
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column p_uncorrected
+		dataType: double
+		lineageTag: 58607d1e-24a5-4f13-b957-af57edbc0d70
+		summarizeBy: sum
+		sourceColumn: p_uncorrected
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column holm_threshold
+		dataType: double
+		lineageTag: 5da3192a-ddc4-4cc3-8347-7dcd75d22c47
+		summarizeBy: sum
+		sourceColumn: holm_threshold
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column p_holm
+		dataType: double
+		lineageTag: f7c405e3-21f3-476f-90bf-a9d6be779ce9
+		summarizeBy: sum
+		sourceColumn: p_holm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'reject_at_familywise_0.05'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ff72b086-c099-4ab8-9dbe-1e6fef4b61bb
+		summarizeBy: none
+		sourceColumn: reject_at_familywise_0.05
+
+		annotation SummarizationSetBy = Automatic
+
+	partition multiplicity_holm_m5 = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\multiplicity_holm_m5.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis", type text}, {"hypothesis_id", type text}, {"p_uncorrected", type number}, {"holm_threshold", type number}, {"p_holm", type number}, {"reject_at_familywise_0.05", type logical}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,151 @@
+-- Phase 6 measures. Paste one at a time into Power BI (Modeling > New measure)
+-- if the .pbip project does not open. Create a table called _Measures first
+-- (Home > Enter data, name it _Measures, delete the blank column).
+
+-- [Effect (pp)]  folder: 01 Headline  format: +0.00;-0.00
+-- The main table has exactly one row per hypothesis, so SELECTEDVALUE returns the single value
+-- under the current slicer selection (BLANK if the user multi-selects, which the slicer
+-- disallows). Already in percentage points -- do NOT multiply by 100.
+Effect (pp) =
+SELECTEDVALUE ( primary_itt[difference_pp] )
+
+-- [Effect CI (pp)]  folder: 01 Headline
+-- String, exactly as the cell reads, e.g. "[-0.437, 0.012]". Human display only -- never plotted.
+-- Panel B uses the numeric ci_low_pp / ci_high_pp columns.
+Effect CI (pp) =
+SELECTEDVALUE ( primary_itt[ci_difference_pp] )
+
+-- [CI Low (pp)]  folder: 01 Headline  format: +0.00;-0.00
+-- Numeric lower CI bound of the difference, for the Panel B whiskers. Native column on primary_itt
+-- (Phase 5c) -- no string parsing anywhere.
+CI Low (pp) =
+SELECTEDVALUE ( primary_itt[ci_low_pp] )
+
+-- [CI High (pp)]  folder: 01 Headline  format: +0.00;-0.00
+-- Numeric upper CI bound of the difference, for the Panel B whiskers.
+CI High (pp) =
+SELECTEDVALUE ( primary_itt[ci_high_pp] )
+
+-- [Rate Treatment (%)]  folder: 01 Headline  format: 0.00
+-- Weighted treatment-arm rate, already a percentage.
+Rate Treatment (%) =
+SELECTEDVALUE ( primary_itt[rate_treatment_pct] )
+
+-- [Rate Control (%)]  folder: 01 Headline  format: 0.00
+-- Weighted control-arm rate, already a percentage.
+Rate Control (%) =
+SELECTEDVALUE ( primary_itt[rate_control_pct] )
+
+-- [N Treatment]  folder: 01 Headline  format: #,0
+-- Arm size. Stated on the page, not hidden in a tooltip -- a reader cannot judge a null without
+-- it.
+N Treatment =
+SELECTEDVALUE ( primary_itt[n_treatment] )
+
+-- [N Control]  folder: 01 Headline  format: #,0
+-- Arm size. Same reason.
+N Control =
+SELECTEDVALUE ( primary_itt[n_control] )
+
+-- [p (uncorrected)]  folder: 01 Headline  format: 0.000
+-- Probability in [0, 1]. Shown beside the corrected p, never instead of it.
+p (uncorrected) =
+SELECTEDVALUE ( primary_itt[p_uncorrected] )
+
+-- [p (Holm, pre-registered family)]  folder: 01 Headline  format: 0.000
+-- Corrected p from the PRE-REGISTERED family (m = 3). Looked up by hypothesis_id, NEVER by the
+-- display label -- an earlier draft joined on the label and "H2 break-off (web)" against "H2
+-- break-off (web only)" returned BLANK silently. TREATAS + VALUES follows the slicer explicitly
+-- rather than relying on ALLSELECTED (the DATA-01 bug where ALLSELECTED treated a visual-level
+-- filter like a slicer). Do not switch this to ALLSELECTED.
+p (Holm, pre-registered family) =
+CALCULATE (
+    SELECTEDVALUE ( multiplicity_holm_m3[p_holm] ),
+    TREATAS ( VALUES ( primary_itt[hypothesis_id] ), multiplicity_holm_m3[hypothesis_id] )
+)
+
+-- [Verdict]  folder: 01 Headline
+-- Full prose verdict for the callout card. Display only -- colour keys off Verdict Class, not this
+-- string.
+Verdict =
+SELECTEDVALUE ( primary_itt[verdict] )
+
+-- [MDE (empirical, pp)]  folder: 02 MDE  format: 0.00
+-- Empirical MDE = 2.8 x SE(difference): the honest minimum detectable effect at 80% power for THIS
+-- outcome on the realised data. Displayed as a symmetric band around zero. For a null result this
+-- is the most important number on the page -- it is what separates 'no effect' from 'no power'.
+MDE (empirical, pp) =
+SELECTEDVALUE ( primary_itt[mde_empirical_pp] )
+
+-- [MDE (grid formula, pp)]  folder: 02 MDE  format: 0.00
+-- The pre-registration grid's own formula 2.8*sqrt(p(1-p)(1/nt+1/nc))*sqrt(DEFF), re-evaluated at
+-- the OBSERVED 1.44% control baseline with Phase 4b's measured design effect: 1.203 pp for H1. The
+-- plan's tabulated grid row says 1.8 pp at an ASSUMED 5% baseline -- different inputs, different
+-- number, both correct. The dashboard uses 1.203 throughout because it matches the realised data.
+MDE (grid formula, pp) =
+SELECTEDVALUE ( primary_itt[mde_grid_formula_pp] )
+
+-- [MDE band lower]  folder: 02 MDE  format: +0.00;-0.00
+-- Lower edge of the shaded band in Panel B. Valid only at hypothesis grain.
+MDE band lower =
+-1 * [MDE (empirical, pp)]
+
+-- [MDE band upper]  folder: 02 MDE  format: +0.00;-0.00
+-- Upper edge of the shaded band in Panel B. Valid only at hypothesis grain.
+MDE band upper =
+[MDE (empirical, pp)]
+
+-- [Effect within MDE]  folder: 02 MDE
+-- TRUE when the observed effect is smaller than what the experiment could detect. TRUE for all
+-- three hypotheses here. Only meaningful at hypothesis grain -- BLANK at a total.
+Effect within MDE =
+VAR e = ABS ( [Effect (pp)] )
+RETURN
+    e < [MDE (empirical, pp)]
+
+-- [Verdict Class]  folder: 03 Verdict colour
+-- Categorical class emitted by src/analysis.py from the same branch that writes the prose verdict.
+-- One of DETECTED / INFORMATIVE_NULL / UNDERPOWERED_NULL. For H2/H3, UNDERPOWERED_NULL is a
+-- conservative presentation convention, NOT the pre-registered rule -- the plan's 3 pp
+-- informativeness bar was written for the primary outcome. Any path the locked plan does not cover
+-- raises in analysis.py rather than emitting a class.
+Verdict Class =
+SELECTEDVALUE ( primary_itt[verdict_class] )
+
+-- [Verdict Colour]  folder: 03 Verdict colour
+-- Exact-match SWITCH on the categorical column. No substring search on prose anywhere. An earlier
+-- draft used SEARCH("DETECTED", [Verdict]) -- DAX SEARCH is case-insensitive and matched "could
+-- not have detected it" in the H2 and H3 verdict strings, colouring two null results as detected
+-- effects. FIND did not fix it. The fix was to stop keying colour on English prose. The final
+-- fallback line is unreachable by construction.
+Verdict Colour =
+SWITCH (
+    [Verdict Class],
+    "DETECTED", "#C0504D",
+    "INFORMATIVE_NULL", "#4F6228",
+    "UNDERPOWERED_NULL", "#E36C0A",
+    "#E36C0A"
+)
+
+-- [Effect Label]  folder: 04 Display strings
+-- Headline effect with its interval attached. No effect is ever displayed on this page without its
+-- uncertainty.
+Effect Label =
+VAR s = IF ( [Effect (pp)] >= 0, "+", "" )
+RETURN
+    s & FORMAT ( [Effect (pp)], "0.00" ) & " pp   " & [Effect CI (pp)] & " pp"
+
+-- [Arms Label]  folder: 04 Display strings
+-- Arm sizes on the page, per the build checklist.
+Arms Label =
+"Treatment n = " & FORMAT ( [N Treatment], "#,0" ) & "   |   Control n = " & FORMAT ( [N Control], "#,0" )
+
+-- [p Label]  folder: 04 Display strings
+-- Corrected and uncorrected p both visible, never one alone.
+p Label =
+"p = " & FORMAT ( [p (uncorrected)], "0.000" ) & " uncorrected   |   " & "p = " & FORMAT ( [p (Holm, pre-registered family)], "0.000" ) & " Holm (family of 3)"
+
+-- [Rates Label]  folder: 04 Display strings
+-- Arm rates behind the difference.
+Rates Label =
+"Treatment " & FORMAT ( [Rate Treatment (%)], "0.00" ) & "%   vs   " & "Control " & FORMAT ( [Rate Control (%)], "0.00" ) & "%"

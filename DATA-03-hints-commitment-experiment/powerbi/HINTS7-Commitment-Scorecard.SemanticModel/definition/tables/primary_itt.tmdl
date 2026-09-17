@@ -1,0 +1,240 @@
+﻿table primary_itt
+	lineageTag: 12041c2f-2376-4635-8aaf-5b78cea12437
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: 071ca6af-40d9-4e28-9c3f-30487d0e87a1
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column hypothesis
+		dataType: string
+		lineageTag: ca6e1d1d-7ad8-4589-b810-3c20004b0e26
+		summarizeBy: none
+		sourceColumn: hypothesis
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_treatment
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a530159-d369-41c2-906e-06562fe08227
+		summarizeBy: sum
+		sourceColumn: n_treatment
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_control
+		dataType: int64
+		formatString: 0
+		lineageTag: 033190b1-b937-4bd5-86c0-ff22007927ab
+		summarizeBy: sum
+		sourceColumn: n_control
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_treatment_pct
+		dataType: double
+		lineageTag: 321b507c-ae07-4f22-829e-638c5f1c71cc
+		summarizeBy: sum
+		sourceColumn: rate_treatment_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_treatment_pct
+		dataType: string
+		lineageTag: 14416a44-3081-44b1-ac91-34f48c9fa3e4
+		summarizeBy: none
+		sourceColumn: ci_treatment_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_control_pct
+		dataType: double
+		lineageTag: dad0894c-8c3f-4d27-83c4-d5f3665d6324
+		summarizeBy: sum
+		sourceColumn: rate_control_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_control_pct
+		dataType: string
+		lineageTag: 13902b07-51af-460e-a67c-d160a5687d9f
+		summarizeBy: none
+		sourceColumn: ci_control_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column difference_pp
+		dataType: double
+		lineageTag: 45a0419d-020d-4e6d-8c77-852338ca07d7
+		summarizeBy: sum
+		sourceColumn: difference_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_difference_pp
+		dataType: string
+		lineageTag: 56504a75-c7e2-41a9-a0a3-af55617ef848
+		summarizeBy: none
+		sourceColumn: ci_difference_pp
+
+		annotation SummarizationSetBy = Automatic
+
+	column ci_low_pp
+		dataType: double
+		lineageTag: 4f4ff7c5-d3f5-48fc-a94d-650a810d28a6
+		summarizeBy: sum
+		sourceColumn: ci_low_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_high_pp
+		dataType: double
+		lineageTag: aecef292-11f7-4fac-a98d-1f87293c7939
+		summarizeBy: sum
+		sourceColumn: ci_high_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column relative_difference_pct
+		dataType: double
+		lineageTag: e24f8e00-3482-49c5-ae19-977c0e0706a4
+		summarizeBy: sum
+		sourceColumn: relative_difference_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column z
+		dataType: double
+		lineageTag: c5922375-2bd8-4df7-9099-3e13db381584
+		summarizeBy: sum
+		sourceColumn: z
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column p_uncorrected
+		dataType: double
+		lineageTag: 9c1f5e9d-0883-4292-90e0-f9c0f9d8a41b
+		summarizeBy: sum
+		sourceColumn: p_uncorrected
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mde_empirical_pp
+		dataType: double
+		lineageTag: 58913950-f83a-463f-935f-bb07816e491a
+		summarizeBy: sum
+		sourceColumn: mde_empirical_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mde_grid_formula_pp
+		dataType: double
+		lineageTag: ab0b0d6f-727c-43c1-a75a-66a7e0a571b8
+		summarizeBy: sum
+		sourceColumn: mde_grid_formula_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column measured_deff
+		dataType: double
+		lineageTag: 8d5b21c7-9c3f-4cfa-816c-34cc6370b9a6
+		summarizeBy: sum
+		sourceColumn: measured_deff
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column verdict
+		dataType: string
+		lineageTag: d221ad21-ee31-43b9-9526-710ba7a207de
+		summarizeBy: none
+		sourceColumn: verdict
+
+		annotation SummarizationSetBy = Automatic
+
+	column verdict_class
+		dataType: string
+		lineageTag: aa048a52-31e6-4ad7-ac5a-d1306792fc60
+		summarizeBy: none
+		sourceColumn: verdict_class
+
+		annotation SummarizationSetBy = Automatic
+
+	column observed_effect_pp
+		dataType: double
+		lineageTag: 79097bfe-b202-49c5-ab91-b7b5ea1d6d22
+		summarizeBy: sum
+		sourceColumn: observed_effect_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column observed_effect_below_empirical_mde
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8666d37e-d8cc-4062-ad38-41ec4c990eda
+		summarizeBy: none
+		sourceColumn: observed_effect_below_empirical_mde
+
+		annotation SummarizationSetBy = Automatic
+
+	column verdict_vis
+		dataType: string
+		lineageTag: 09472723-a4f4-4179-aa11-50fb000f2f6b
+		summarizeBy: none
+		sourceColumn: verdict_vis
+
+		annotation SummarizationSetBy = Automatic
+
+	partition primary_itt = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\primary_itt.csv"),[Delimiter=",", Columns=20, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis_id", type text}, {"hypothesis", type text}, {"n_treatment", Int64.Type}, {"n_control", Int64.Type}, {"rate_treatment_pct", type number}, {"ci_treatment_pct", type text}, {"rate_control_pct", type number}, {"ci_control_pct", type text}, {"difference_pp", type number}, {"ci_difference_pp", type text}, {"ci_low_pp", type number}, {"ci_high_pp", type number}, {"relative_difference_pct", type number}, {"z", type number}, {"p_uncorrected", type number}, {"mde_empirical_pp", type number}, {"mde_grid_formula_pp", type number}, {"measured_deff", type number}, {"verdict", type text}, {"verdict_class", type text}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"hypothesis_id"}, mde, {"hypothesis_id"}, "mde", JoinKind.LeftOuter),
+				    #"Expanded mde" = Table.ExpandTableColumn(#"Merged Queries", "mde", {"observed_effect_pp", "observed_effect_below_empirical_mde"}, {"observed_effect_pp", "observed_effect_below_empirical_mde"}),
+				    #"Uppercased Text" = Table.TransformColumns(#"Expanded mde",{{"hypothesis", Text.Upper, type text}}),
+				    #"Lowercased Text" = Table.TransformColumns(#"Uppercased Text",{{"verdict_class", Text.Lower, type text}}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Lowercased Text", "verdict", "verdict - Copy"),
+				    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"verdict - Copy", "verdict_vis"}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns","DISCONFIRMING (rates within 1 pp, or CI spans both directions) -> NULL; INFORMATIVE NULL (observed effect < MDE, MDE < 3 pp)","The commitment statement did not reduce item nonresponse (âˆ’0.21 pp, 95% CI [âˆ’0.44, +0.01]). This is an informative null: the experiment could detect effects as small as 0.32 pp â€” well under the plan's 3 pp bar for a meaningful result â€” so a real effect of practical size would have shown up here.",Replacer.ReplaceText,{"verdict_vis"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","H2 break-off: NULL (CI includes 0); observed effect (1.815 pp) < MDE (4.270 pp): experiment could not have detected it","The commitment statement showed no reliable effect on web break-off â€” if anything, break-off ticked up in the treatment arm (+1.82 pp, 95% CI [âˆ’1.17, +4.80]), but the whole interval sits inside the experiment's 4.27 pp blind spot. An underpowered null, not a signal in either direction.",Replacer.ReplaceText,{"verdict_vis"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","H3 response error: NULL (CI includes 0); observed effect (0.021 pp) < MDE (0.118 pp): experiment could not have detected it","The commitment statement showed no measurable effect on response error (âˆ’0.02 pp, 95% CI [âˆ’0.10, +0.06]) against a 0.36% baseline. Underpowered by convention, not by the plan's rule: the plan's 3 pp informativeness bar was written for far more common outcomes and doesn't scale down to one this rare â€” 'informative' vs. 'underpowered' isn't really decidable here.",Replacer.ReplaceText,{"verdict_vis"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2","The commitment statement did not reduce item nonresponse (âˆ’0.21 pp, 95% CI [âˆ’0.44, +0.01]). This is an informative null: the experiment could detect effects as small as 0.32 pp â€” well under the plan's 3 pp bar for a meaningful result â€” so a real effect of practical size would have shown up here.","No effect on item nonresponse (âˆ’0.21 pp). The study could reliably detect changes this small â€” this is a real null, not an inconclusive test.",Replacer.ReplaceText,{"verdict_vis"}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value3","The commitment statement showed no reliable effect on web break-off â€” if anything, break-off ticked up in the treatment arm (+1.82 pp, 95% CI [âˆ’1.17, +4.80]), but the whole interval sits inside the experiment's 4.27 pp blind spot. An underpowered null, not a signal in either direction.","No reliable effect on web break-off. If anything it rose slightly (+1.82 pp), but couldn't confirm or rule out an effect.",Replacer.ReplaceText,{"verdict_vis"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4","The commitment statement showed no measurable effect on response error (âˆ’0.02 pp, 95% CI [âˆ’0.10, +0.06]) against a 0.36% baseline. Underpowered by convention, not by the plan's rule: the plan's 3 pp informativeness bar was written for far more common outcomes and doesn't scale down to one this rare â€” 'informative' vs. 'underpowered' isn't really decidable here.","No measurable effect on response error (âˆ’0.02 pp). The outcome's too rare for this study's yardstick to say either way.",Replacer.ReplaceText,{"verdict_vis"})
+				in
+				    #"Replaced Value5"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

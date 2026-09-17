@@ -1,0 +1,30 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["primary_itt","mde","multiplicity_holm_m3","multiplicity_holm_m5","sensitivity_filter_missing","sensitivity_web_never_seen","mode_subgroup","per_protocol","balance","assertion_history","peeking_illustration","_Measures"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table primary_itt
+ref table mde
+ref table multiplicity_holm_m3
+ref table multiplicity_holm_m5
+ref table sensitivity_filter_missing
+ref table sensitivity_web_never_seen
+ref table mode_subgroup
+ref table per_protocol
+ref table balance
+ref table assertion_history
+ref table peeking_illustration
+ref table _Measures
+
+ref cultureInfo en-US
+

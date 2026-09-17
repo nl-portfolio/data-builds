@@ -1,0 +1,108 @@
+﻿table mde
+	lineageTag: a27e9c05-7b0e-4281-9bc6-35cd9614298d
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: 2f28870c-f163-40d0-82e7-b4ab50403fcb
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column hypothesis
+		dataType: string
+		lineageTag: 6561b626-cee5-4ecf-b287-81f309f024c6
+		summarizeBy: none
+		sourceColumn: hypothesis
+
+		annotation SummarizationSetBy = Automatic
+
+	column observed_baseline_rate_pct
+		dataType: double
+		lineageTag: 629cc72d-fd79-47ec-ba09-fe35bff2d887
+		summarizeBy: sum
+		sourceColumn: observed_baseline_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column n_treatment
+		dataType: int64
+		formatString: 0
+		lineageTag: a84f1c87-361b-486a-a09c-ee8c3216ac3d
+		summarizeBy: sum
+		sourceColumn: n_treatment
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_control
+		dataType: int64
+		formatString: 0
+		lineageTag: 0de9da23-fe75-47d3-bcbb-731562ba341a
+		summarizeBy: sum
+		sourceColumn: n_control
+
+		annotation SummarizationSetBy = Automatic
+
+	column measured_rate_deff
+		dataType: double
+		lineageTag: c6644df9-117f-48f1-bf25-b3866229c219
+		summarizeBy: sum
+		sourceColumn: measured_rate_deff
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mde_grid_formula_pp
+		dataType: double
+		lineageTag: d3343acb-9958-43d4-a63b-66bbf3a4dd84
+		summarizeBy: sum
+		sourceColumn: mde_grid_formula_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mde_empirical_pp
+		dataType: double
+		lineageTag: 9f67f4ec-845a-4455-a5e9-cc6c84a1d1d2
+		summarizeBy: sum
+		sourceColumn: mde_empirical_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column observed_effect_pp
+		dataType: double
+		lineageTag: 8f6def4f-80f1-497a-beaf-1a60733f6301
+		summarizeBy: sum
+		sourceColumn: observed_effect_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column observed_effect_below_empirical_mde
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8db4a536-32c0-414d-9060-56b5f3bbfc76
+		summarizeBy: none
+		sourceColumn: observed_effect_below_empirical_mde
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mde = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\mde.csv"),[Delimiter=",", Columns=10, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis_id", type text}, {"hypothesis", type text}, {"observed_baseline_rate_pct", type number}, {"n_treatment", Int64.Type}, {"n_control", Int64.Type}, {"measured_rate_deff", type number}, {"mde_grid_formula_pp", type number}, {"mde_empirical_pp", type number}, {"observed_effect_pp", type number}, {"observed_effect_below_empirical_mde", type logical}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

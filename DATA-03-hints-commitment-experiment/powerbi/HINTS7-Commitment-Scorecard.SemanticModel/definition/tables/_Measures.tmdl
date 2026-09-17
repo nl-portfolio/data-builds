@@ -1,0 +1,159 @@
+table _Measures
+	lineageTag: 1c034b96-a149-4937-836e-b33d9c2ff035
+
+	measure 'Effect (pp)' = SELECTEDVALUE ( primary_itt[difference_pp] )
+		formatString: +0.00;-0.00
+		displayFolder: 01 Headline
+		lineageTag: dd10b6df-08c4-4633-b2e6-4515e32b4a09
+		dataCategory: Uncategorized
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Effect CI (pp)' = SELECTEDVALUE ( primary_itt[ci_difference_pp] )
+		displayFolder: 01 Headline
+		lineageTag: 62ff7fa0-0af0-4580-974a-d355966397a2
+
+	measure 'CI Low (pp)' = SELECTEDVALUE ( primary_itt[ci_low_pp] )
+		formatString: +0.00;-0.00
+		displayFolder: 01 Headline
+		lineageTag: 6b65cdc9-19ec-404a-8e79-c57de2ecc9ba
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'CI High (pp)' = SELECTEDVALUE ( primary_itt[ci_high_pp] )
+		formatString: +0.00;-0.00
+		displayFolder: 01 Headline
+		lineageTag: 7cfcc990-c6fc-4680-8246-c1f750c8c30c
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Rate Treatment (%)' = SELECTEDVALUE ( primary_itt[rate_treatment_pct] )
+		formatString: 0.00
+		displayFolder: 01 Headline
+		lineageTag: 8f99330e-c1f9-478c-b03b-c7525d435769
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Rate Control (%)' = SELECTEDVALUE ( primary_itt[rate_control_pct] )
+		formatString: 0.00
+		displayFolder: 01 Headline
+		lineageTag: f301bd37-20ff-40a8-8047-3a92d15b0985
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'N Treatment' = SELECTEDVALUE ( primary_itt[n_treatment] )
+		formatString: #,0
+		displayFolder: 01 Headline
+		lineageTag: 50d788b3-92fa-4507-a3ae-b17c6bad18c6
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'N Control' = SELECTEDVALUE ( primary_itt[n_control] )
+		formatString: #,0
+		displayFolder: 01 Headline
+		lineageTag: 49ab87db-388e-4bb7-b3aa-9d0e14b4577d
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'p (uncorrected)' = SELECTEDVALUE ( primary_itt[p_uncorrected] )
+		formatString: 0.000
+		displayFolder: 01 Headline
+		lineageTag: edf81e80-a63a-45f5-ac3f-2dd47002b966
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'p (Holm, pre-registered family)' =
+			
+			CALCULATE (
+			    SELECTEDVALUE ( multiplicity_holm_m3[p_holm] ),
+			    TREATAS ( VALUES ( primary_itt[hypothesis_id] ), multiplicity_holm_m3[hypothesis_id] )
+			)
+		formatString: 0.000
+		displayFolder: 01 Headline
+		lineageTag: b6802b38-94ce-4c6a-8067-0624ae59e467
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure Verdict = SELECTEDVALUE ( primary_itt[verdict] )
+		displayFolder: 01 Headline
+		lineageTag: 5b33498b-9d0a-4bef-89c1-7612f6cefb96
+
+	measure 'Verdict Display' =
+			
+			VAR raw     = [Verdict]
+			VAR arrowAt = FIND ( "->", raw, 1, 0 )
+			VAR semiAt  = IF ( arrowAt > 0, FIND ( ";", raw, arrowAt, 0 ), 0 )
+			RETURN
+			    IF ( semiAt > 0, TRIM ( MID ( raw, semiAt + 1, 300 ) ), raw )
+		displayFolder: 01 Headline
+		lineageTag: eca8bbbc-076c-4d12-86eb-fef3209300e5
+
+	measure 'MDE (empirical, pp)' = SELECTEDVALUE ( primary_itt[mde_empirical_pp] )
+		formatString: 0.00
+		displayFolder: 02 MDE
+		lineageTag: ac195b0b-14c3-4af6-aae8-eaa7e0e48a3a
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'MDE (grid formula, pp)' = SELECTEDVALUE ( primary_itt[mde_grid_formula_pp] )
+		formatString: 0.00
+		displayFolder: 02 MDE
+		lineageTag: fcaabf8e-c79d-4fbf-a7b6-3e156557be16
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'MDE band lower' = -1 * [MDE (empirical, pp)]
+		formatString: +0.00;-0.00
+		displayFolder: 02 MDE
+		lineageTag: 64ba6ddd-65d4-44f4-be0b-b005bf161952
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'MDE band upper' = [MDE (empirical, pp)]
+		formatString: +0.00;-0.00
+		displayFolder: 02 MDE
+		lineageTag: 74b16426-589f-4d43-8f16-e7283dc60d82
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	measure 'Effect within MDE' = SELECTEDVALUE ( primary_itt[observed_effect_below_empirical_mde] )
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		displayFolder: 02 MDE
+		lineageTag: 5d55389d-4ea1-4ad3-8e5a-677b17c1f0aa
+
+	measure 'Verdict Class' = SELECTEDVALUE ( primary_itt[verdict_class] )
+		displayFolder: 03 Verdict colour
+		lineageTag: 04b8b926-3bd7-4cd3-aac9-7f75ab183c81
+
+	measure 'Verdict Colour' = SWITCH ( [Verdict Class], "DETECTED", "#C0504D", "INFORMATIVE_NULL", "#4F6228", "UNDERPOWERED_NULL", "#E36C0A", "#E36C0A" )
+		displayFolder: 03 Verdict colour
+		lineageTag: 499c10f6-0140-48b1-80e0-8e7ab65863b5
+
+	measure 'Effect Label' = VAR s = IF ( [Effect (pp)] >= 0, "+", "" ) RETURN s & FORMAT ( [Effect (pp)], "0.00" ) & " pp   " & [Effect CI (pp)] & " pp"
+		displayFolder: 04 Display strings
+		lineageTag: 1a0358d7-17ff-4186-a560-71f3def8deff
+
+	measure 'Arms Label' = "Treatment n = " & FORMAT ( [N Treatment], "#,0" ) & "   |   Control n = " & FORMAT ( [N Control], "#,0" )
+		displayFolder: 04 Display strings
+		lineageTag: dd7e84b6-913d-4453-8532-7b55ad5df6dc
+
+	measure 'p Label' = "p = " & FORMAT ( [p (uncorrected)], "0.000" ) & " uncorrected   |   " & "p = " & FORMAT ( [p (Holm, pre-registered family)], "0.000" ) & " Holm (family of 3)"
+		displayFolder: 04 Display strings
+		lineageTag: 5cc715cd-53d0-413e-a0e0-ce25fb9ea52f
+
+	measure 'Rates Label' = "Treatment " & FORMAT ( [Rate Treatment (%)], "0.00" ) & "% " & SELECTEDVALUE ( primary_itt[ci_treatment_pct] ) & "   vs   " & "Control " & FORMAT ( [Rate Control (%)], "0.00" ) & "% " & SELECTEDVALUE ( primary_itt[ci_control_pct] )
+		displayFolder: 04 Display strings
+		lineageTag: 59852c20-f893-4b64-84a1-c9591985a1f5
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

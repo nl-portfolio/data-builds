@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "HINTS7-Commitment-Scorecard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8cd48f97-2a54-411b-abbc-e71be11b9776"
+  }
+}

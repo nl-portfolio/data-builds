@@ -1,0 +1,107 @@
+﻿table balance
+	lineageTag: 076ace4c-e1fa-4884-bf8b-358918173b79
+
+	column covariate
+		dataType: string
+		lineageTag: f491685a-bb22-4aa9-aacc-d35c94735a88
+		summarizeBy: none
+		sourceColumn: covariate
+
+		annotation SummarizationSetBy = Automatic
+
+	column levels
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b41eb57-977c-4e49-a379-0990d4fbe156
+		summarizeBy: sum
+		sourceColumn: levels
+
+		annotation SummarizationSetBy = Automatic
+
+	column chi2
+		dataType: double
+		lineageTag: 5ad1aa5d-12f3-4e88-886e-36739c4f5feb
+		summarizeBy: sum
+		sourceColumn: chi2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dof
+		dataType: int64
+		formatString: 0
+		lineageTag: f7fa77d1-3e04-40eb-96bb-3209e15b9dd0
+		summarizeBy: sum
+		sourceColumn: dof
+
+		annotation SummarizationSetBy = Automatic
+
+	column p_value
+		dataType: double
+		lineageTag: 41eabe8d-d2a9-42b0-8caa-d32d6cc178c2
+		summarizeBy: sum
+		sourceColumn: p_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_arm_share_gap_pp
+		dataType: double
+		lineageTag: 8fdadac6-bc7d-4dc4-970a-5a294e45320d
+		summarizeBy: sum
+		sourceColumn: max_arm_share_gap_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column overrepresented_level
+		dataType: string
+		lineageTag: cc269e71-ac7c-4c23-9d5c-aa0b6a92ba77
+		summarizeBy: none
+		sourceColumn: overrepresented_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column treatment_share_pct
+		dataType: double
+		lineageTag: bdc0566c-b7c6-46b1-9907-8bfa0b4702c4
+		summarizeBy: sum
+		sourceColumn: treatment_share_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column control_share_pct
+		dataType: double
+		lineageTag: 40c070a0-e0d1-403b-863c-1b4f6df5f126
+		summarizeBy: sum
+		sourceColumn: control_share_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column flag
+		dataType: string
+		lineageTag: fb4dd14d-bdd9-4bf5-9e53-cf070e17c335
+		summarizeBy: none
+		sourceColumn: flag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition balance = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\balance.csv"),[Delimiter=",", Columns=10, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"covariate", type text}, {"levels", Int64.Type}, {"chi2", type number}, {"dof", Int64.Type}, {"p_value", type number}, {"max_arm_share_gap_pp", type number}, {"overrepresented_level", type text}, {"treatment_share_pct", type number}, {"control_share_pct", type number}, {"flag", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

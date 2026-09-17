@@ -1,0 +1,5 @@
+hypothesis_id,group,n,rate_pct,ci_lo_pct,ci_hi_pct
+H1,Agreed (CommitmentStmt = Yes) [NON-RANDOMISED],1389,1.1663033567848584,0.9839077660723325,1.3486989474973843
+H1,Did not agree (No or Not Ascertained) [NON-RANDOMISED],124,1.8596644781069729,1.143829726998344,2.575499229215602
+H1,"Descriptive difference (agreed - did not agree) [NON-RANDOMISED, NOT CAUSAL]",1513,-0.6933611213221145,-1.4320677900385435,0.04534554739431453
+H1,"Declined only (CommitmentStmt = No) -- DESCRIBED, NOT TESTED",14,,,

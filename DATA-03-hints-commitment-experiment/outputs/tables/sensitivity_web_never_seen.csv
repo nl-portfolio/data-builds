@@ -1,0 +1,3 @@
+hypothesis,hypothesis_id,spec,primary_diff_pp,primary_ci_pp,primary_p,sensitivity_diff_pp,sensitivity_ci_pp,sensitivity_p,sign_agrees,both_null_at_0.05
+H1 item nonresponse,H1,exclude Web-Never-Seen from denominator,-0.21288734415553234,"[-0.437, 0.012]",0.06317438732143646,-0.09688129235088695,"[-0.415, 0.221]",0.5500791817854827,True,True
+H3 response error,H3,exclude Web-Never-Seen from denominator,-0.02112492736770044,"[-0.104, 0.062]",0.6171894714333517,-0.021350871919231622,"[-0.104, 0.061]",0.6129185499451009,True,True

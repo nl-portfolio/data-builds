@@ -1,0 +1,71 @@
+﻿table peeking_illustration
+	lineageTag: a5ddb967-49a7-496e-9645-0b890c562ecd
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: cda6e92a-4492-4599-80cf-a0ad2f39911d
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fraction
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 5506e689-ef07-4c70-b540-17d7dfc60b7e
+		summarizeBy: sum
+		sourceColumn: fraction
+
+		annotation SummarizationSetBy = Automatic
+
+	column n
+		dataType: int64
+		formatString: 0
+		lineageTag: 51a23c78-56ac-4448-af4f-0b0568ec78f3
+		summarizeBy: sum
+		sourceColumn: n
+
+		annotation SummarizationSetBy = Automatic
+
+	column diff_pp
+		dataType: double
+		lineageTag: 738687de-3b5b-4473-905c-f3f2626e4fc2
+		summarizeBy: sum
+		sourceColumn: diff_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column z
+		dataType: double
+		lineageTag: edcccecd-f9a6-4c54-af1b-ab9d83d59c25
+		summarizeBy: sum
+		sourceColumn: z
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column p_value
+		dataType: double
+		lineageTag: 7ac7d552-eb19-42f6-be8a-d28a9bb79601
+		summarizeBy: sum
+		sourceColumn: p_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition peeking_illustration = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\peeking_illustration.csv"),[Delimiter=",", Columns=6, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis_id", type text}, {"fraction", type number}, {"n", Int64.Type}, {"diff_pp", type number}, {"z", type number}, {"p_value", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

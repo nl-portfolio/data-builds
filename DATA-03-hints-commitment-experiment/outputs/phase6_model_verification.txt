@@ -1,0 +1,41 @@
+PASS 40 / 40
+  ok    valid JSON: panelB_deneb_spec.json
+  ok    valid JSON: HINTS7-Commitment-Scorecard.Report/definition/report.json
+  ok    valid JSON: HINTS7-Commitment-Scorecard.Report/definition/pages/pages.json
+  ok    valid JSON: HINTS7-Commitment-Scorecard.Report/definition/pages/scorecard/page.json
+  ok    valid JSON: HINTS7-Commitment-Scorecard.pbip
+  ok    valid JSON: HINTS7-Commitment-Scorecard.SemanticModel/definition.pbism
+  ok    valid JSON: HINTS7-Commitment-Scorecard.Report/definition.pbir
+  ok    valid JSON: HINTS7-Commitment-Scorecard.SemanticModel/.platform
+  ok    valid JSON: HINTS7-Commitment-Scorecard.Report/.platform
+  ok    no relationships declared (guide 1/2: tables stay unrelated)
+  ok    no ALLSELECTED in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no ALLEXCEPT in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no SUMX in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no AVERAGEX in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no FILTER ( in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no RANKX in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no ALL ( in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no ALL( in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no EARLIER in any measure (DATA-01 ALL/ALLSELECTED scope-bug class)
+  ok    no respondent/item-level source in the model: analysis_frame
+  ok    no respondent/item-level source in the model: hints7_public
+  ok    no respondent/item-level source in the model: .parquet
+  ok    no respondent/item-level source in the model: .rda
+  ok    no respondent/item-level source in the model: item_denominator
+  ok    exactly the 11 locked result tables, plus _Measures
+  ok    measures reference only locked tables: ['multiplicity_holm_m3', 'primary_itt']
+  ok    no arithmetic that re-derives a rate, SE, p-value or MDE
+  ok    no SEARCH/FIND on prose (the R16 colour bug)
+  ok    Verdict Colour switches on verdict_class exactly
+  ok    Holm lookup joins on hypothesis_id, never the display label
+  ok    uncertainty companion present: Effect CI (pp)
+  ok    uncertainty companion present: CI Low (pp)
+  ok    uncertainty companion present: CI High (pp)
+  ok    mode_subgroup n_tx/n_ctl typed number -> Int64 (guide gap G2)
+  ok    merge expands exactly 2 columns: "observed_effect_pp", "observed_effect_below_empirical_mde"
+  ok    merge does NOT expand the duplicated MDE columns (no .1 suffix ambiguity)
+  ok    merge joins on hypothesis_id, never a label
+  ok    22 measures present (found 22)
+  ok    every data column summarizeBy: none (no accidental implicit aggregation)
+  ok    report ships as an empty page; no visual can define a forbidden slicer

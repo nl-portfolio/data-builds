@@ -1,0 +1,149 @@
+========================================================================
+PANEL A — headline strings, rebuilt from cells via the guide DAX
+========================================================================
+
+### H1 — H1 item nonresponse
+  Effect Label : -0.21 pp   [-0.437, 0.012] pp
+  Rates Label  : Treatment 1.22%   vs   Control 1.44%
+  Arms Label   : Treatment n = 1,513   |   Control n = 5,765
+  p Label      : p = 0.063 uncorrected   |   p = 0.190 Holm (family of 3)
+  Verdict Class: INFORMATIVE_NULL
+  Verdict      : DISCONFIRMING (rates within 1 pp, or CI spans both directions) -> NULL; INFORMATIVE NULL (observed effect < MDE, MDE < 3 pp)
+
+### H2 — H2 break-off (web only)
+  Effect Label : +1.81 pp   [-1.172, 4.802] pp
+  Rates Label  : Treatment 6.94%   vs   Control 5.12%
+  Arms Label   : Treatment n = 1,061   |   Control n = 3,800
+  p Label      : p = 0.234 uncorrected   |   p = 0.467 Holm (family of 3)
+  Verdict Class: UNDERPOWERED_NULL
+  Verdict      : H2 break-off: NULL (CI includes 0); observed effect (1.815 pp) < MDE (4.270 pp): experiment could not have detected it
+
+### H3 — H3 response error
+  Effect Label : -0.02 pp   [-0.104, 0.062] pp
+  Rates Label  : Treatment 0.34%   vs   Control 0.36%
+  Arms Label   : Treatment n = 1,513   |   Control n = 5,765
+  p Label      : p = 0.617 uncorrected   |   p = 0.617 Holm (family of 3)
+  Verdict Class: UNDERPOWERED_NULL
+  Verdict      : H3 response error: NULL (CI includes 0); observed effect (0.021 pp) < MDE (0.118 pp): experiment could not have detected it
+
+========================================================================
+PANEL B — dot, whiskers, MDE band (all three rows)
+========================================================================
+H        dot   CI low  CI high   MDE emp  MDE grid  inside band?
+H1     -0.21    -0.44    +0.01     ±0.32     ±1.20  True
+H2     +1.81    -1.17    +4.80     ±4.27     ±3.67  True
+H3     -0.02    -0.10    +0.06     ±0.12     ±0.59  True
+
+-- cross-check: mde.csv agrees with primary_itt.csv on the shared columns --
+  mde_empirical_pp       max abs diff itt vs mde = 0.0
+  mde_grid_formula_pp    max abs diff itt vs mde = 0.0
+  n_treatment            max abs diff itt vs mde = 0
+  n_control              max abs diff itt vs mde = 0
+  difference_pp vs observed_effect_pp max abs diff = 0.4257746883110646
+  observed_effect_below_empirical_mde flags: [True, True, True]
+  recomputed |effect| < MDE          : [True, True, True]
+
+-- cross-check: CI string vs numeric CI columns --
+  H1: string [-0.437, 0.012] vs numeric [-0.4374662954074162, 0.0116916070963515]  match=True
+  H2: string [-1.172, 4.802] vs numeric [-1.17235404557742, 4.802260126099102]  match=True
+  H3: string [-0.104, 0.062] vs numeric [-0.1039615570491819, 0.0617117023137811]  match=True
+
+-- cross-check: does the CI exclude zero anywhere? (must be no, all null) --
+  H1: CI excludes 0 = False
+  H2: CI excludes 0 = False
+  H3: CI excludes 0 = False
+
+========================================================================
+PANEL C — multiplicity, family of 3 and footnote family of 5
+========================================================================
+
+-- m3 --
+  H1 item nonresponse                    p=0.063  thr=0.017  holm=0.190  reject=False
+  H2 break-off (web only)                p=0.234  thr=0.025  holm=0.467  reject=False
+  H3 response error                      p=0.617  thr=0.050  holm=0.617  reject=False
+  any rejection: False
+
+-- m5 --
+  mode interaction: A item nonresponse   p=0.057  thr=0.010  holm=0.284  reject=False
+  H1 item nonresponse                    p=0.063  thr=0.013  holm=0.284  reject=False
+  H2 break-off (web only)                p=0.234  thr=0.017  holm=0.701  reject=False
+  mode interaction: C response error     p=0.596  thr=0.025  holm=1.000  reject=False
+  H3 response error                      p=0.617  thr=0.050  holm=1.000  reject=False
+  any rejection: False
+
+-- Holm recomputation from p_uncorrected (independent of the stored p_holm) --
+  m3: recomputed Holm vs stored, max abs diff = 1.11e-16
+  m5: recomputed Holm vs stored, max abs diff = 2.78e-16
+
+========================================================================
+PANEL D — pre-registered mode subgroup
+========================================================================
+  A item nonresponse   web                            -0.05  [-0.26, +0.16]  p=0.645
+  A item nonresponse   paper                          -0.67  [-1.28, -0.07]  p=0.029
+  C response error     web                            -0.01  [-0.03, +0.02]  p=0.634
+  C response error     paper                          -0.09  [-0.39, +0.22]  p=0.572
+  B break-off          web                            +1.81  [-1.17, +4.80]  p=0.234
+  A item nonresponse   web - paper (interaction)      +0.62  [-0.02, +1.26]  p=0.057
+  C response error     web - paper (interaction)      +0.08  [-0.22, +0.39]  p=0.596
+  interaction rows present: ['A item nonresponse', 'C response error']
+
+========================================================================
+PANEL E — sensitivity blocks
+========================================================================
+
+-- Filter-Missing --
+  H1: primary -0.21 (p=0.063)  sensitivity -0.27 (p=0.025)  sign_agrees=True both_null=False
+  H2: primary +1.81 (p=0.234)  sensitivity +1.81 (p=0.235)  sign_agrees=True both_null=True
+  H3: primary -0.02 (p=0.617)  sensitivity -0.02 (p=0.584)  sign_agrees=True both_null=True
+
+-- Web-Never-Seen --
+  H1: primary -0.21 (p=0.063)  sensitivity -0.10 (p=0.550)  sign_agrees=True both_null=True
+  H3: primary -0.02 (p=0.617)  sensitivity -0.02 (p=0.613)  sign_agrees=True both_null=True
+
+-- primary_diff_pp / primary_p must equal primary_itt cells --
+  Filter-Missing: max |primary_diff_pp - difference_pp| = 0.0, max |primary_p - p_uncorrected| = 0.0
+  Web-Never-Seen: max |primary_diff_pp - difference_pp| = 0.0, max |primary_p - p_uncorrected| = 0.0
+
+========================================================================
+PANEL F — balance
+========================================================================
+  Age group (AgeGrpB)              p=0.091 gap=2.69pp  tx=20.62% ctl=18.09%  [35-49] balanced
+  Sex at birth (BirthSex)          p=0.499 gap=0.78pp  tx=8.46% ctl=7.68%  [(missing/not ascertained)] balanced
+  Race/ethnicity (RaceEthn5)       p=0.107 gap=1.98pp  tx=14.87% ctl=12.89%  [Non-Hispanic Black or African American] balanced
+  Education (EducA)                p=0.585 gap=1.63pp  tx=16.19% ctl=15.20%  [High School Graduate] balanced
+  Income (IncomeRanges)            p=0.766 gap=0.94pp  tx=7.53% ctl=6.59%  [$0 to $9,999] balanced
+  Marital status (MaritalStatus)   p=0.743 gap=1.78pp  tx=5.75% ctl=5.05%  [Living as married or living with a romantic partner] balanced
+  Survey mode (FormType)           p=0.002 gap=4.21pp  tx=70.13% ctl=65.92%  [HINTS7, standard version - web] IMBALANCED (p<0.01)
+  Design stratum (STRATUM)         p=0.433 gap=1.04pp  tx=64.90% ctl=63.99%  [High minority urban area] balanced
+  balanced count: 7 / 8
+  guide caption trace -> tx 70.13 / ctl 65.92 / p 0.002 / level "HINTS7, standard version - web"
+
+========================================================================
+PANEL G — per protocol
+========================================================================
+  Agreed (CommitmentStmt = Yes) [NON-RANDOMISED]                         n= 1389  rate=1.1663033567848584  [0.9839077660723324, 1.3486989474973845]
+  Did not agree (No or Not Ascertained) [NON-RANDOMISED]                 n=  124  rate=1.8596644781069729  [1.143829726998344, 2.575499229215602]
+  Descriptive difference (agreed - did not agree) [NON-RANDOMISED, NOT CAUSAL] n= 1513  rate=-0.6933611213221145  [-1.4320677900385437, 0.0453455473943145]
+  Declined only (CommitmentStmt = No) -- DESCRIBED, NOT TESTED           n=   14  rate=nan  [nan, nan]
+
+========================================================================
+FOOTER — assertion history
+========================================================================
+  rows: 31   all passed: True   distinct guard values: ['passed']
+  implied_n_over_n range: 0.1557 – 0.7914
+  implied_n <= n_respondents for all rows: True
+
+========================================================================
+PEEKING INSET
+========================================================================
+  rows: 20  fraction range 0.05–1.0  p range 0.0632–0.9994  crosses 0.05: False
+
+========================================================================
+STRUCTURAL CHECKS
+========================================================================
+  hypothesis label for H2 in primary_itt : "H2 break-off (web only)"
+  hypothesis label for H2 in m3          : "H2 break-off (web only)"
+  labels identical across tables: True   <- join on hypothesis_id regardless
+  verdict_class values: ['INFORMATIVE_NULL', 'UNDERPOWERED_NULL']
+  all verdict_class in allowed set: True
+  DAX SEARCH("DETECTED", verdict) would falsely match: ['H2', 'H3']  <- why colour keys on verdict_class, not prose

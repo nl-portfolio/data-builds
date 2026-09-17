@@ -1,0 +1,90 @@
+﻿table assertion_history
+	lineageTag: 80c9c950-a4af-4849-a551-72b6b13026f1
+
+	column estimate
+		dataType: string
+		lineageTag: 98473ecf-750e-4df1-b7f6-1dd2f59dd898
+		summarizeBy: none
+		sourceColumn: estimate
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_respondents
+		dataType: int64
+		formatString: 0
+		lineageTag: e42f6f6f-82ac-4896-93fa-2c40148b0311
+		summarizeBy: sum
+		sourceColumn: n_respondents
+
+		annotation SummarizationSetBy = Automatic
+
+	column point_pct
+		dataType: double
+		lineageTag: 31fcc862-a2e3-4879-923e-176478bf12ff
+		summarizeBy: sum
+		sourceColumn: point_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column se_pp
+		dataType: double
+		lineageTag: 41bf06a8-cf4f-4898-b311-739bea859b64
+		summarizeBy: sum
+		sourceColumn: se_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column implied_n
+		dataType: double
+		lineageTag: 54eea99b-86b8-4ef9-bad0-dd2f9232e6ed
+		summarizeBy: sum
+		sourceColumn: implied_n
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column implied_n_over_n
+		dataType: double
+		lineageTag: 504bf1ff-08e9-43fa-a250-3eedd38cd1a5
+		summarizeBy: sum
+		sourceColumn: implied_n_over_n
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column design_effect_rate
+		dataType: double
+		lineageTag: cb65db33-8627-457f-b96e-35a4d61187f6
+		summarizeBy: sum
+		sourceColumn: design_effect_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column guard
+		dataType: string
+		lineageTag: 3c7209f3-79a7-403a-a116-b89f6ac81662
+		summarizeBy: none
+		sourceColumn: guard
+
+		annotation SummarizationSetBy = Automatic
+
+	partition assertion_history = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\assertion_history.csv"),[Delimiter=",", Columns=8, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"estimate", type text}, {"n_respondents", Int64.Type}, {"point_pct", type number}, {"se_pp", type number}, {"implied_n", type number}, {"implied_n_over_n", type number}, {"design_effect_rate", type number}, {"guard", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

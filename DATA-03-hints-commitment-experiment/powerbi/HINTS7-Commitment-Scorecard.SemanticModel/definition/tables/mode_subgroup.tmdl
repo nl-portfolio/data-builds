@@ -1,0 +1,127 @@
+﻿table mode_subgroup
+	lineageTag: 59bb2140-5ecb-42a9-81a3-638619f6f4ab
+
+	column hypothesis_id
+		dataType: string
+		lineageTag: 272aabb6-4d6d-44c4-bda6-419bb26e5a92
+		summarizeBy: none
+		sourceColumn: hypothesis_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column family
+		dataType: string
+		lineageTag: 7be41a0a-931c-412b-b895-7af494185f53
+		summarizeBy: none
+		sourceColumn: family
+
+		annotation SummarizationSetBy = Automatic
+
+	column mode
+		dataType: string
+		lineageTag: 91384edc-612f-411a-b4a7-8f7d1b6ab38c
+		summarizeBy: none
+		sourceColumn: mode
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_tx
+		dataType: int64
+		formatString: 0
+		lineageTag: df855aca-ce5c-4efe-94f6-36bc0e4c775a
+		summarizeBy: sum
+		sourceColumn: n_tx
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_ctl
+		dataType: int64
+		formatString: 0
+		lineageTag: ec28bfd9-04d6-40b1-a954-c54a2c32e632
+		summarizeBy: sum
+		sourceColumn: n_ctl
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_tx_pct
+		dataType: double
+		lineageTag: 212cf448-4269-4760-a37b-ac5d62bd8dad
+		summarizeBy: sum
+		sourceColumn: rate_tx_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column rate_ctl_pct
+		dataType: double
+		lineageTag: 2c9b6dbf-df52-415b-aa02-3646c8c4232b
+		summarizeBy: sum
+		sourceColumn: rate_ctl_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column diff_pp
+		dataType: double
+		lineageTag: eb523543-1409-4cae-b89a-5dd3cbba499f
+		summarizeBy: sum
+		sourceColumn: diff_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_lo_pp
+		dataType: double
+		lineageTag: d4ccfaa7-8c4a-4503-8bb1-0d0403d3b739
+		summarizeBy: sum
+		sourceColumn: ci_lo_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ci_hi_pp
+		dataType: double
+		lineageTag: 821758df-b458-4cdd-96af-399f338ec574
+		summarizeBy: sum
+		sourceColumn: ci_hi_pp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column z
+		dataType: double
+		lineageTag: 725d6769-b0f2-4374-a579-bbd491611943
+		summarizeBy: sum
+		sourceColumn: z
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column p_value
+		dataType: double
+		lineageTag: c9809289-7899-4a4c-ac7e-79e31ef5d72e
+		summarizeBy: sum
+		sourceColumn: p_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition mode_subgroup = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("<path-to-this-repo>\outputs\tables\mode_subgroup.csv"),[Delimiter=",", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"hypothesis_id", type text}, {"family", type text}, {"mode", type text}, {"n_tx", Int64.Type}, {"n_ctl", Int64.Type}, {"rate_tx_pct", type number}, {"rate_ctl_pct", type number}, {"diff_pp", type number}, {"ci_lo_pp", type number}, {"ci_hi_pp", type number}, {"z", type number}, {"p_value", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

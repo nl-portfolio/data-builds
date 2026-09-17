@@ -1,0 +1,4 @@
+hypothesis,hypothesis_id,spec,primary_diff_pp,primary_ci_pp,primary_p,sensitivity_diff_pp,sensitivity_ci_pp,sensitivity_p,sign_agrees,both_null_at_0.05
+H1 item nonresponse,H1,exclude Filter Missing from denominator,-0.21288734415553234,"[-0.437, 0.012]",0.06317438732143646,-0.27439157677135884,"[-0.515, -0.034]",0.025415680566301384,True,False
+H2 break-off (web only),H2,exclude Filter Missing from denominator,1.814953040260841,"[-1.172, 4.802]",0.23372912759877917,1.8118806993573287,"[-1.177, 4.801]",0.2347655888365907,True,True
+H3 response error,H3,exclude Filter Missing from denominator,-0.02112492736770044,"[-0.104, 0.062]",0.6171894714333517,-0.023378739835839712,"[-0.107, 0.060]",0.5842590355169663,True,True

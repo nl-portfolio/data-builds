@@ -1,0 +1,36 @@
+# Raw data — downloaded once, used everywhere, kept private
+# Reason: HINTS bundle is large (20MB+) and public domain, so fetch_data.py
+# downloads it from NCI rather than committing it. No secrets here, just bulk.
+data/raw/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# R history
+.Rhistory
+.Rapp.history
+
+# OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Editor
+*.sublime-workspace
+*.sublime-project
